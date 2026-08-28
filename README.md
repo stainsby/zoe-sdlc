@@ -2,64 +2,65 @@
   <img src="docs/images/zoe_logo.svg" alt="ZOE — Zero Organisation Enterprises" width="480">
 </p>
 
-# ZOE SDLC
+# ZOE SDLC (Software Development Lifecycle)
 
-A way of running a software project using agentic skills. Humans act
-as 'directors', while the agents manage everything else.
+An agentic skill set for running a software project. Humans act as 'directors',
+while the AI agents manage everything else. It specialises the overarching
+[ZOE (Zero Organisation Enterprises)](https://github.com/stainsby/zoe-kernel)
+skills for your software project, creating processes that audit and improve
+themselves with minimal supervision.
 
-ZOE SDLC is a template ZOE (Zero Organisation Enterprise) — a set of skills and
-instructions designed to work alongside the
-[ZOE kernel](https://github.com/stainsby/zoe-kernel) and be extended
-for your software project. It is designed to create projects that audit
-and improve themselves autonomously.
-
-Current version: see [`VERSION`](base/VERSION). What changed in each release: see
-[`CHANGELOG.md`](CHANGELOG.md).
-
-## What is in it
+## Contents
 
 One instructions file — [`zoe-sdlc.instructions.md`](base/instructions/zoe-sdlc.instructions.md),
-carrying the rules that apply across everything — and ten skills:
+carrying the rules that apply across everything — and ten skills. Five are actions,
+run to do a piece of work; five are understanding, read for what they define rather
+than run:
 
-| Skill | What it covers |
-|---|---|
-| [`zoe-sdlc-adopt`](base/skills/zoe-sdlc-adopt/SKILL.md) | bringing a project — new or existing — under this process |
-| [`zoe-sdlc-components`](base/skills/zoe-sdlc-components/SKILL.md) | breaking a system into components and capabilities, and naming them |
-| [`zoe-sdlc-tasks`](base/skills/zoe-sdlc-tasks/SKILL.md) | what every task has to record |
-| [`zoe-sdlc-sequencing`](base/skills/zoe-sdlc-sequencing/SKILL.md) | the order every change follows, and what "complete" means |
-| [`zoe-sdlc-templates`](base/skills/zoe-sdlc-templates/SKILL.md) | what a template is here, and how to use one |
-| [`zoe-sdlc-stories`](base/skills/zoe-sdlc-stories/SKILL.md) | writing down what someone wants, in their words |
-| [`zoe-sdlc-specify`](base/skills/zoe-sdlc-specify/SKILL.md) | writing a component's specification |
-| [`zoe-sdlc-develop`](base/skills/zoe-sdlc-develop/SKILL.md) | running a piece of implementation work |
-| [`zoe-sdlc-fix`](base/skills/zoe-sdlc-fix/SKILL.md) | fixing a defect |
-| [`zoe-sdlc-audits`](base/skills/zoe-sdlc-audits/SKILL.md) | the four checks that keep intent, documents and software in line |
+| Skill | Kind | What it covers |
+|---|---|---|
+| [`zoe-sdlc-adopt`](base/skills/zoe-sdlc-adopt/SKILL.md) | action | bringing a project — new or existing — under this process |
+| [`zoe-sdlc-components`](base/skills/zoe-sdlc-components/SKILL.md) | understanding | breaking a system into components and capabilities, and naming them |
+| [`zoe-sdlc-tasks`](base/skills/zoe-sdlc-tasks/SKILL.md) | understanding | what every task has to record |
+| [`zoe-sdlc-sequencing`](base/skills/zoe-sdlc-sequencing/SKILL.md) | understanding | the order every change follows, and what "complete" means |
+| [`zoe-sdlc-templates`](base/skills/zoe-sdlc-templates/SKILL.md) | understanding | what a template is here, and how to use one |
+| [`zoe-sdlc-stories`](base/skills/zoe-sdlc-stories/SKILL.md) | action | user stories — writing down what someone wants, in their words |
+| [`zoe-sdlc-specify`](base/skills/zoe-sdlc-specify/SKILL.md) | action | writing a component's specification |
+| [`zoe-sdlc-develop`](base/skills/zoe-sdlc-develop/SKILL.md) | action | running a piece of implementation work |
+| [`zoe-sdlc-fix`](base/skills/zoe-sdlc-fix/SKILL.md) | action | fixing a defect |
+| [`zoe-sdlc-audits`](base/skills/zoe-sdlc-audits/SKILL.md) | understanding | the four checks that keep intent, documents and software in line |
 
-## How to use
+## Usage
 
-Point your AI host at this base — the
-[instructions file](base/instructions/zoe-sdlc.instructions.md) and the skills under
-[`skills/`](base/skills/) — alongside the ZOE kernel, and ask it how to proceed. It starts with `zoe-sdlc-adopt`, which
-extends the kernel's own setup: with you present, it settles the handful of decisions this
-process needs from your project — where tasks live, how things are named, how tests are
-run, and so on. From there, the cycle takes over.
+Clone or copy the ZOE kernel repo as well as this one and point your AI at the
+instructions files and the skills under `kernel/` in ZOE kernel and `base/`
+in ZOE SDLC. Once it can see the instructions and skills, ask it how to
+proceed. It will guide you through the first draft of your charter and into
+the first cycle.
 
-Alternatively, get your AI to read *this* file and help you wire in the instructions and
-skills.
+Alternatively, get your AI to read *this* file and help you wire in the
+instructions and skills.
 
-## What this is not
+We are also investigating Claude plugins to make setup even smoother — stay
+tuned.
 
-It does not prescribe files, paths or formats. It says what has to be true, and leaves your
-project to decide the shape. It is meant to work whether your work is tracked in Jira,
-GitHub Issues or plain files, and whatever your repository looks like.
+## Adaptability
 
-## Changing it
+Unlike its precursor, [PAPI](https://github.com/stainsby/papi), ZOE SDLC
+is minimally opinionated, and in general does not prescribe files, paths or
+formats. The vast majority of how things run, where things are stored, and so
+on, is decided during setup and refined as time goes on. Your ZOE should
+be able to work with your existing system and tools however you wish.
 
-The instructions and skill files here are intended to be read-only to you.
-Instead, agents specialise your project by adding more skills alongside these.
-Improvements to the base itself travel back upstream, so that everyone running
-it gets the fix.
+## Immutability
 
-## Where it came from
+The instructions and skill files here are intended to be read-only to your
+project. Instead, agents specialise your ZOE by adding more skills alongside
+these.
 
-ZOE SDLC is the successor to the [PAPI Skills](https://github.com/stainsby/papi) project,
-whose process ideas it generalises.
+## Origin
+
+ZOE SDLC is the successor to the
+[PAPI Skills](https://github.com/stainsby/papi) project, whose process ideas
+it generalises. The PAPI project suffered from a lack of more general skills,
+which led to the ZOE kernel project, the parent of ZOE SDLC.
