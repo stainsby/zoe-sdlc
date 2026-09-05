@@ -1,5 +1,25 @@
 # Changelog
 
+## Unreleased
+
+### A way to check the install took
+
+The base now ships `hosts/claude-code/check-install.sh`, alongside `base/` rather
+than inside it, matching where the ZOE kernel keeps its own host packaging.
+
+Wiring this base into a project is small — link its skills where your host looks,
+add one import line beside the kernel's — and an AI that has just installed the
+kernel can do both by analogy. That is why the base still ships no step-by-step
+install guide. But nothing told you whether the wiring took. A broken `@` import
+produces no warning: the session starts, looks entirely normal, and runs with no
+instructions and therefore no gates. An AI that wired it up wrongly is the one
+thing that cannot then report the fact.
+
+The script checks that the instructions import resolves as written, that every
+skill the base ships is linked, and that no link in `.claude/skills/` dangles —
+the last of these catching a skill removed or renamed by an upgrade, which leaves
+a link behind that a check looking only at current skills never visits.
+
 ## 0.5.0 — 2026-08-21
 
 The largest change to the base since it was first written, and the first one
