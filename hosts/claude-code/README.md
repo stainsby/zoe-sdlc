@@ -48,9 +48,10 @@ guesses a few common locations; pass the path if you put it elsewhere:
 hosts/claude-code/check-install.sh .zoe-sdlc/base
 ```
 
-It must print no `FAIL` and exit zero. The counts in its last line are the point, not
-decoration: a check that only inspects what it happens to find will pass when it finds
+A good install prints no `FAIL` and exits zero. The counts in its last line are the point,
+not decoration: a check that only inspects what it happens to find will pass when it finds
 nothing, which is exactly what happens when an import line was meant to be merged into an
 existing `CLAUDE.md` and the merge got missed.
 
-Re-run it after any change to your skill links or your `CLAUDE.md`.
+It is worth running again after any change to your skill links or your `CLAUDE.md`, and it
+is cheap to add to whatever already runs your project's checks.
