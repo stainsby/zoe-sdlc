@@ -17,28 +17,51 @@
 # Prints FAIL lines and exits non-zero on any fault. Reads only.
 set -uo pipefail
 
+# Is this directory actually the ZOE SDLC base, rather than some other tree that happens
+# to have a skills/ in it? Every skill this base ships is prefixed with the enterprise's
+# full name, so that prefix is the test. Without it, a project with its own base/skills/
+# gets a confident verdict on entirely the wrong directory.
+is_base() {
+  [ -d "$1/skills" ] || return 1
+  [ -f "$1/instructions/zoe-sdlc.instructions.md" ] && return 0
+  for d in "$1"/skills/zoe-sdlc-*/; do [ -d "$d" ] && return 0; done
+  return 1
+}
+
 base="${1:-}"
 if [ -z "$base" ]; then
-  for guess in base sdlc .zoe-sdlc/base .sdlc/base; do
-    [ -d "$guess/skills" ] && { base="$guess"; break; }
+  for guess in base sdlc zoe-sdlc/base .zoe-sdlc/base .sdlc/base; do
+    is_base "$guess" && { base="$guess"; break; }
   done
 fi
 
-[ -n "$base" ] && [ -d "$base/skills" ] || {
-  echo "FAIL: cannot find the base tree. Pass its path, e.g. $0 .zoe-sdlc/base" >&2
+[ -n "$base" ] || {
+  echo "FAIL: cannot find the ZOE SDLC base tree. Pass its path, e.g. $0 zoe-sdlc/base" >&2
+  exit 2
+}
+is_base "$base" || {
+  echo "FAIL: $base does not look like the ZOE SDLC base — no instructions/zoe-sdlc.instructions.md and no zoe-sdlc-* skill under $base/skills/" >&2
   exit 2
 }
 
 fault=0
 
 # --- 1. The instructions import resolves --------------------------------------
-# An `@` import resolves relative to the file containing it, so test it as written
-# rather than assuming where it was put.
+# A relative `@` import resolves against the directory of the file containing it, so test
+# it as written rather than assuming where it was put. An absolute or ~ import does not:
+# joining it to a directory turns a valid path into a relative one that cannot exist, and
+# the check would then report a working install as broken.
 n=0
 for f in CLAUDE.md .claude/CLAUDE.md; do
   [ -f "$f" ] || continue
   for imp in $(grep -o '@[^[:space:]]*zoe-sdlc\.instructions\.md' "$f"); do
-    n=$((n+1)); t="$(dirname "$f")/${imp#@}"
+    n=$((n+1)); p="${imp#@}"
+    case "$p" in
+      /*)  t="$p" ;;
+      \~/*) t="$HOME/${p#\~/}" ;;
+      \~)  t="$HOME" ;;
+      *)   t="$(dirname "$f")/$p" ;;
+    esac
     if [ -f "$t" ]; then echo "ok   import  $f -> $t"
     else echo "FAIL: import does not resolve: $f -> $t" >&2; fault=1; fi
   done
