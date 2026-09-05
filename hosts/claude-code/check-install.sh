@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Check that ZOE SDLC is actually wired into this project.
+# Check that ZOE SDLC is actually installed into this project.
 #
-# Getting the wiring wrong fails silently. Claude Code gives no warning when an `@` import
+# Getting the install wrong fails silently. Claude Code gives no warning when an `@` import
 # points at nothing, or when there is no import at all: the session starts, looks entirely
 # normal, and runs with no instructions and therefore no gates. The counts below are the
 # point, not decoration — a check that only inspects what it finds passes when it finds

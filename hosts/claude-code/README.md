@@ -8,9 +8,9 @@ will already have installed.
 
 ## Contents
 
-- `check-install.sh` — verifies that this base is actually wired into your project.
+- `check-install.sh` — verifies that this base is actually installed into your project.
 
-## Why a check, when the wiring is small
+## Why a check, when the install is small
 
 Installing the base is two things: link its skills where your host looks for skills, and add
 one import line beside the kernel's, `@<your path>/base/instructions/zoe-sdlc.instructions.md`.
@@ -19,7 +19,7 @@ ships no step-by-step guide for it.
 
 What an AI cannot do is tell you it got it wrong. A broken `@` import produces no warning:
 the session starts, looks entirely normal, and runs with no instructions and therefore no
-gates. An AI that wired it up wrongly is the one thing that cannot then report the fact. So
+gates. An AI that installed it wrongly is the one thing that cannot then report the fact. So
 the check is not documentation you can skip — it is the only part of the install that does
 not rest on the AI's own say-so.
 
