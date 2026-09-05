@@ -4,18 +4,19 @@
 
 # ZOE SDLC (Software Development Lifecycle)
 
-An agentic skill set for running a software project. Humans act as 'directors',
-while the AI agents manage everything else. It specialises the overarching
-[ZOE (Zero Organisation Enterprises)](https://github.com/stainsby/zoe-kernel)
-skills for your software project, creating processes that audit and improve
-themselves with minimal supervision.
+A skill set for running a software project with AI agents. Humans act as
+'directors', while the agents manage everything else. It specialises the
+overarching [ZOE kernel](https://github.com/stainsby/zoe-kernel) (ZOE = Zero
+Organisation Enterprises) skills for your software project, creating
+processes that audit and improve themselves with minimal supervision.
 
 ## Contents
 
-One instructions file — [`zoe-sdlc.instructions.md`](base/instructions/zoe-sdlc.instructions.md),
-carrying the rules that apply across everything — and ten skills. Five are actions,
-run to do a piece of work; five are understanding, read for what they define rather
-than run:
+The files below are designed to be used in conjunction with those from
+[ZOE kernel](https://github.com/stainsby/zoe-kernel).
+
+**Instructions file:**
+[`zoe-sdlc.instructions.md`](base/instructions/zoe-sdlc.instructions.md).
 
 | Skill | Kind | What it covers |
 |---|---|---|
@@ -32,7 +33,7 @@ than run:
 
 ## Usage
 
-Clone or copy the ZOE kernel repo as well as this one and point your AI at the
+Clone or copy the ZOE kernel repo as well as this one, and point your AI at the
 instructions files and the skills under `kernel/` in ZOE kernel and `base/`
 in ZOE SDLC. Once it can see the instructions and skills, ask it how to
 proceed. It will guide you through the first draft of your charter and into
@@ -55,12 +56,12 @@ be able to work with your existing system and tools however you wish.
 ## Immutability
 
 The instructions and skill files here are intended to be read-only to your
-project. Instead, agents specialise your ZOE by adding more skills alongside
-these.
+project. Rather than editing them, agents specialise your ZOE by adding more
+skills alongside these.
 
 ## Origin
 
 ZOE SDLC is the successor to the
 [PAPI Skills](https://github.com/stainsby/papi) project, whose process ideas
-it generalises. The PAPI project suffered from a lack of more general skills,
+it generalises. PAPI lacked the more general skills that a project needs,
 which led to the ZOE kernel project, the parent of ZOE SDLC.
