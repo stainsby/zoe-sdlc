@@ -12,10 +12,10 @@ will already have installed.
 
 ## Why a check, when the install is small
 
-Installing the base is two things: link its skills where your host looks for skills, and add
-one import line beside the kernel's, pointing at
-`base/instructions/zoe-sdlc.instructions.md` inside wherever you put this tree. An AI that
-has just installed the kernel can do both by analogy, and this base deliberately ships no
+Installing the base is three things: put this tree somewhere in your project, link its skills
+where your host looks for skills, and add one import line beside the kernel's, pointing at
+`base/instructions/zoe-sdlc.instructions.md` inside wherever you put it. An AI that has just
+installed the kernel can do all three by analogy, and this base deliberately ships no
 step-by-step guide for it.
 
 **Where you write that import line decides what it resolves against.** A relative `@` import
