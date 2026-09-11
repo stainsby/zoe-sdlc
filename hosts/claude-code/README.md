@@ -14,7 +14,7 @@ will already have installed.
 
 Installing the base is three things: put this tree somewhere in your project, link its skills
 where your host looks for skills, and add one import line beside the kernel's, pointing at
-`base/instructions/zoe-sdlc.instructions.md` inside wherever you put it. An AI that has just
+`base/instructions/zoe-sdlc.instructions.md` inside that tree. An AI that has just
 installed the kernel can do all three by analogy, and this base deliberately ships no
 step-by-step guide for it.
 
@@ -30,28 +30,37 @@ put it.
 What an AI cannot do is tell you it got it wrong. A broken `@` import produces no warning:
 the session starts, looks entirely normal, and runs with no instructions and therefore no
 gates. An AI that installed it wrongly is the one thing that cannot then report the fact. So
-the check is not documentation you can skip — it is the only part of the install that does
-not rest on the AI's own say-so.
+the check is the only part of the install that does not rest on the AI's own say-so.
 
 ## Running it
 
 From your project root:
 
 ```sh
-hosts/claude-code/check-install.sh [path-to-the-base-tree]
+zoe-sdlc/hosts/claude-code/check-install.sh
 ```
 
-This base contains no path of its own, so where its tree lives is your choice. The script
-guesses a few common locations; pass the path if you put it elsewhere:
+The leading path is wherever you put this tree — `zoe-sdlc/` above, to match the import
+example earlier. Run it from the project root rather than from the directory it lives in:
+every path it tests is relative to the root, because that is where your `CLAUDE.md` and
+`.claude/` are.
+
+This base contains no path of its own, so where its tree lives is your choice. With no
+argument the script guesses a few common locations for the base; pass the path if you put it
+elsewhere:
 
 ```sh
-hosts/claude-code/check-install.sh .zoe-sdlc/base
+zoe-sdlc/hosts/claude-code/check-install.sh .zoe-sdlc/base
 ```
 
 A good install prints no `FAIL` and exits zero. The counts in its last line are the point,
 not decoration: a check that only inspects what it happens to find will pass when it finds
 nothing, which is exactly what happens when an import line was meant to be merged into an
 existing `CLAUDE.md` and the merge got missed.
+
+The two non-zero exits mean different things: **1** is the check running and finding faults
+in your install; **2** is the check unable to run at all, because it could not find the base
+tree — pass the path and run it again.
 
 It is worth running again after any change to your skill links or your `CLAUDE.md`, and it
 is cheap to add to whatever already runs your project's checks.

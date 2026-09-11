@@ -7,14 +7,19 @@
 # point, not decoration — a check that only inspects what it finds passes when it finds
 # nothing, which is exactly what happens when a merge into an existing CLAUDE.md got missed.
 #
-# Usage, from your project root:
-#   hosts/claude-code/check-install.sh [path-to-the-base-tree]
+# Usage, from your project root — the leading path is wherever you put this tree:
+#   zoe-sdlc/hosts/claude-code/check-install.sh [path-to-the-base-tree]
 #
-# The base tree is wherever you put it — this base contains no path of its own, so the
-# default below is a guess. Pass the path if you put it somewhere else:
-#   ./check-install.sh .zoe-sdlc/base
+# Run it from the project root, not from the directory it lives in: every path it tests is
+# relative to the root, because that is where your CLAUDE.md and .claude/ are.
 #
-# Prints FAIL lines and exits non-zero on any fault. Reads only.
+# The base tree is wherever you put it — this base contains no path of its own — so with no
+# argument the script guesses a few common locations. Pass the path if you put it elsewhere:
+#   zoe-sdlc/hosts/claude-code/check-install.sh .zoe-sdlc/base
+#
+# Prints FAIL lines and reads only. Two different non-zero exits:
+#   1 — it ran and found faults in the install.
+#   2 — it could not run the check at all, because it could not find the base tree.
 set -uo pipefail
 
 # Is this directory actually the ZOE SDLC base, rather than some other tree that happens
@@ -52,7 +57,8 @@ fault=0
 # joining it to a directory turns a valid path into a relative one that cannot exist, and
 # the check would then report a working install as broken.
 n=0
-for f in CLAUDE.md .claude/CLAUDE.md; do
+read_files="CLAUDE.md, .claude/CLAUDE.md or ~/.claude/CLAUDE.md"
+for f in CLAUDE.md .claude/CLAUDE.md "$HOME/.claude/CLAUDE.md"; do
   [ -f "$f" ] || continue
   for imp in $(grep -o '@[^[:space:]]*zoe-sdlc\.instructions\.md' "$f"); do
     n=$((n+1)); p="${imp#@}"
@@ -67,7 +73,7 @@ for f in CLAUDE.md .claude/CLAUDE.md; do
   done
 done
 [ "$n" -gt 0 ] || {
-  echo "FAIL: no ZOE SDLC import line anywhere — its instructions, and its rules, will not load" >&2
+  echo "FAIL: no ZOE SDLC import line in $read_files — its instructions, and its rules, will not load" >&2
   fault=1
 }
 
@@ -81,9 +87,13 @@ for d in "$base"/skills/*/; do
   l=".claude/skills/$name"
   if [ -e "$l" ]; then
     linked=$((linked+1))
+  elif [ -L "$l" ]; then
+    # A link that is there but points at nothing. Counted as a fault here, but reported
+    # once only — by the sweep below, which visits every link and would otherwise say it
+    # a second time.
+    fault=1
   else
-    [ -L "$l" ] && echo "FAIL: dangling skill link: $l" >&2 \
-                || echo "FAIL: skill not linked into .claude/skills/: $name" >&2
+    echo "FAIL: skill not linked into .claude/skills/: $name" >&2
     fault=1
   fi
 done
