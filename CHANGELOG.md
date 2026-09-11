@@ -7,18 +7,24 @@
 The base now ships `hosts/claude-code/check-install.sh`, alongside `base/` rather
 than inside it, matching where the ZOE kernel keeps its own host packaging.
 
-Installing this base is small — link its skills where your host looks, add one
-import line beside the kernel's — and an AI that has just installed the kernel can
-do both by analogy. That is why the base still ships no step-by-step install
-guide. But nothing told you whether the install took. A broken `@` import produces
-no warning: the session starts, looks entirely normal, and runs with no
-instructions and therefore no gates. An AI that installed it wrongly is the one
-thing that cannot then report the fact.
+Installing this base is small — put its tree somewhere in your project, link its
+skills where your host looks, and add one import line beside the kernel's — and an
+AI that has just installed the kernel can do all three by analogy. That is why the
+base still ships no step-by-step install guide. But nothing told you whether the
+install took. A broken `@` import produces no warning: the session starts, looks
+entirely normal, and runs with no instructions and therefore no gates. An AI that
+installed it wrongly is the one thing that cannot then report the fact.
 
 The script checks that the instructions import resolves as written, that every
 skill the base ships is linked, and that no link in `.claude/skills/` dangles —
 the last of these catching a skill removed or renamed by an upgrade, which leaves
 a link behind that a check looking only at current skills never visits.
+
+It reads the import as you actually wrote it, in any of the forms that work: a
+path relative to the file holding it, an absolute path, or one starting with `~`.
+And it satisfies itself that the tree you pointed it at really is this base,
+rather than accepting any directory that happens to contain a `skills/` folder —
+a check that reports confidently on the wrong tree is worse than no check.
 
 ## 0.5.0 — 2026-08-21
 
