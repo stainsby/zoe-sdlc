@@ -39,30 +39,27 @@ is_base() {
   return 1
 }
 
-# The physical directory a path leads to, with links followed, so two routes to one place
-# compare equal.
-real_dir() { ( cd -- "$1" 2>/dev/null && pwd -P ); }
+# The check reads the project it is run from, and cannot tell where the project root is. A
+# directory with neither a CLAUDE.md nor a .claude/skills/ is not one anything was installed
+# into, so say that, rather than report every missing piece as a fault in an install that may
+# be fine.
+[ -e CLAUDE.md ] || [ -d .claude/skills ] || {
+  echo "FAIL: no CLAUDE.md and no .claude/skills/ in $(pwd) — run this from your project root" >&2
+  exit 2
+}
 
 base="${1:-}"
 if [ -z "$base" ]; then
-  # This script sits at hosts/claude-code/ in the tree, so the base is two levels up. The
-  # tree has to lie inside the directory the check runs from, because that is where it looks
-  # for CLAUDE.md and .claude/; run from anywhere else, it would report faults that are not
-  # there. The base is shown relative to that directory, which is how the reader put it.
-  tree="$(real_dir "$(dirname -- "$0")/../..")"
-  root="$(pwd -P)"
-  case "$tree" in
-    "$root"/*) base="${tree#"$root"/}/base" ;;
-    *) echo "FAIL: the tree this script sits in is not inside the directory you ran it from. Run it from your project root, or pass the path to the base: $0 path/to/base" >&2
-       exit 2 ;;
-  esac
+  # This script sits at hosts/claude-code/ in the tree, so the base is two levels up. Shown
+  # relative to where it is run from when it lies inside it, which is how the reader put it.
+  base="$(cd -- "$(dirname -- "$0")/../.." 2>/dev/null && pwd)/base"
+  base="${base#"$(pwd)"/}"
 fi
 
 is_base "$base" || {
   echo "FAIL: $base does not look like the ZOE SDLC base — no instructions/zoe-sdlc.instructions.md and no zoe-sdlc-* skill under $base/skills/. Pass its path: $0 path/to/base" >&2
   exit 2
 }
-base_real="$(real_dir "$base")"
 
 fault=0
 
@@ -85,7 +82,7 @@ for f in CLAUDE.md .claude/CLAUDE.md "$HOME/.claude/CLAUDE.md"; do
     esac
     if [ ! -f "$t" ]; then
       echo "FAIL: import does not resolve: $f -> $t" >&2; fault=1
-    elif [ "$(real_dir "$(dirname -- "$t")")/$(basename -- "$t")" != "$base_real/instructions/zoe-sdlc.instructions.md" ]; then
+    elif [ ! "$t" -ef "$base/instructions/zoe-sdlc.instructions.md" ]; then
       echo "FAIL: import loads a different copy of the base, not $base: $f -> $t" >&2; fault=1
     else
       echo "ok   import  $f -> $t"
@@ -105,13 +102,15 @@ linked=0
 for d in "$base"/skills/*/; do
   name="$(basename "$d")"
   l=".claude/skills/$name"
-  if [ -e "$l" ]; then
-    if [ "$(real_dir "$l")" = "$base_real/skills/$name" ]; then
-      linked=$((linked+1))
-    else
-      echo "FAIL: $l is not the skill in $base — it leads to $(real_dir "$l")" >&2
-      fault=1
-    fi
+  # -ef asks whether two paths are the same directory, however either is reached.
+  if [ "$l" -ef "$base/skills/$name" ]; then
+    linked=$((linked+1))
+  elif [ -L "$l" ] && [ -e "$l" ]; then
+    echo "FAIL: $l links to a different copy of the base, not $base" >&2
+    fault=1
+  elif [ -e "$l" ]; then
+    echo "FAIL: $l is a copy, not a link into $base — link it, so it follows the base when you upgrade" >&2
+    fault=1
   elif [ -L "$l" ]; then
     # A link that is there but points at nothing. Counted as a fault here, but reported
     # once only — by the sweep below, which visits every link and would otherwise say it
