@@ -16,7 +16,9 @@ By default, human approval is needed at five points in this process:
 - deciding what a piece of work that serves no recorded intent actually means,
   when an audit finds one.
 
-An adopter can give the AI more autonomy than this, or less.
+An adopter can give the AI more autonomy than this, or less. The points a
+project keeps go into its charter's hard rules, which every agent doing the work
+is given (`zoe-sdlc-adopt`).
 
 ## Style
 

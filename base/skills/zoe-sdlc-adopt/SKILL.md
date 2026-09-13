@@ -2,7 +2,7 @@
 name: zoe-sdlc-adopt
 kind: action
 description: Bring a software project — new or existing — under this process, extending `zoe-setup`. For the single pass at the start, and again only if the project's foundations genuinely shift.
-version: 6
+version: 7
 ---
 
 > SDLC Base file — read-only to adopters. Do not edit. Specialise by adding
@@ -16,6 +16,8 @@ repositories, READMEs, vision documents, conventions.
 
 Produces:
 
+- the approval points this project keeps, written into the charter's hard
+  rules;
 - the decisions listed in step 2, recorded in the index alongside the ones
   `zoe-setup` records;
 - the three checks, written and runnable;
@@ -26,6 +28,14 @@ Steps:
 
 1. **Charter.** Nothing below the charter ever quotes it or points back at it.
    It applies to everything under it automatically.
+
+   **This process's approval points go into its hard rules.** The instructions
+   list five points where a person approves before work goes on. Ask the
+   director which of them this project keeps, and write those into the
+   charter's hard rules as things to ask first. Only the hard rules make an
+   action gated, and they are what every agent doing the work is given,
+   including one launched for a single task. An instructions file is not always
+   in front of that agent.
 2. **Decide these too.**
 
    Each one gives this project a concrete answer to something the process
