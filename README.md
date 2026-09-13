@@ -33,17 +33,17 @@ The files below are designed to be used in conjunction with those from
 
 ## Usage
 
-Clone or copy the ZOE kernel repo as well as this one, and point your AI at the
-instructions files and the skills under `kernel/` in ZOE kernel and `base/`
-in ZOE SDLC. Once it can see the instructions and skills, ask it how to
-proceed. It will guide you through the first draft of your charter and into
-the first cycle.
+Install the [ZOE kernel](https://github.com/stainsby/zoe-kernel) first — as a
+plugin, or by hand, as its README describes. Then clone or copy this repo, and
+point your AI at the instructions file and the skills under `base/`. Once it can
+see the instructions and skills, ask it how to proceed. It will guide you through
+the first draft of your charter and into the first cycle.
 
 Alternatively, get your AI to read *this* file and help you wire in the
 instructions and skills.
 
-We are also investigating Claude plugins to make setup even smoother — stay
-tuned.
+We are also investigating a Claude plugin for ZOE SDLC, like the one the ZOE
+kernel now has, to make setup even smoother — stay tuned.
 
 ## Adaptability
 
