@@ -8,18 +8,18 @@
 # nothing, which is exactly what happens when a merge into an existing CLAUDE.md got missed.
 #
 # Usage, from your project root — the leading path is wherever you put this tree:
-#   zoe-sdlc/hosts/claude-code/check-install.sh [path-to-the-base-tree]
+#   zoe-sdlc/hosts/claude-code/check-install.sh [path-to-base]
 #
-# Run it from the project root, not from the directory it lives in: every path it tests is
-# relative to the root, because that is where your CLAUDE.md and .claude/ are.
+# Run it from the project root, not from the directory it lives in: that is where it looks
+# for CLAUDE.md, .claude/CLAUDE.md and .claude/skills/. It also reads ~/.claude/CLAUDE.md,
+# because an import written there loads too.
 #
-# The base tree is wherever you put it — this base contains no path of its own — so with no
-# argument the script guesses a few common locations. Pass the path if you put it elsewhere:
-#   zoe-sdlc/hosts/claude-code/check-install.sh .zoe-sdlc/base
+# With no argument it checks the base in the tree it sits in, which is right whenever this
+# tree is kept whole. Pass the path to base/ only if you keep base/ apart from this folder.
 #
 # Prints FAIL lines and reads only. Two different non-zero exits:
 #   1 — it ran and found faults in the install.
-#   2 — it could not run the check at all, because it could not find the base tree.
+#   2 — it could not run the check at all, because it could not find the base.
 set -uo pipefail
 
 # Is this directory actually the ZOE SDLC base, rather than some other tree that happens
@@ -35,13 +35,14 @@ is_base() {
 
 base="${1:-}"
 if [ -z "$base" ]; then
-  for guess in base sdlc zoe-sdlc/base .zoe-sdlc/base .sdlc/base; do
-    is_base "$guess" && { base="$guess"; break; }
-  done
+  # This script sits at hosts/claude-code/ in the tree, so the base is two levels up. Shown
+  # relative to the project root where it lies inside it, which is how the reader put it.
+  here="$(cd "$(dirname "$0")/../.." 2>/dev/null && pwd)" && here="${here#"$PWD"/}/base"
+  is_base "$here" && base="$here"
 fi
 
 [ -n "$base" ] || {
-  echo "FAIL: cannot find the ZOE SDLC base tree. Pass its path, e.g. $0 zoe-sdlc/base" >&2
+  echo "FAIL: cannot find the ZOE SDLC base beside this script. Pass its path: $0 path/to/base" >&2
   exit 2
 }
 is_base "$base" || {

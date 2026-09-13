@@ -8,9 +8,10 @@ The base now ships `hosts/claude-code/check-install.sh`, alongside `base/` rathe
 than inside it, matching where the ZOE kernel keeps its own host packaging.
 
 Installing this base is small — put its tree somewhere in your project, link its
-skills where your host looks, and add one import line beside the kernel's — and an
-AI that has just installed the kernel can do all three by analogy. That is why the
-base still ships no step-by-step install guide. But nothing told you whether the
+skills where your host looks, and add one import line beside the kernel's. That is
+the shape of the ZOE kernel's own manual install, which an AI can take as its
+pattern even if the kernel went in as a plugin, and it is why the base still ships
+no step-by-step install guide. But nothing told you whether the
 install took. A broken `@` import produces no warning: the session starts, looks
 entirely normal, and runs with no instructions and therefore no gates. An AI that
 installed it wrongly is the one thing that cannot then report the fact.
@@ -24,7 +25,26 @@ It reads the import as you actually wrote it, in any of the forms that work: a
 path relative to the file holding it, an absolute path, or one starting with `~`.
 And it satisfies itself that the tree you pointed it at really is this base,
 rather than accepting any directory that happens to contain a `skills/` folder —
-a check that reports confidently on the wrong tree is worse than no check.
+a check that reports confidently on the wrong tree is worse than no check. Run with
+no argument, it checks the base in the tree it sits in, so a path is needed only if
+you keep `base/` apart from the rest of this repository.
+
+### Approval points reach every agent doing the work
+
+The base's instructions name five points where a person approves before work goes
+on, among them deleting or weakening a test. Under the ZOE kernel, only the
+charter's hard rules make an action gated. And since kernel 1.4.0, an agent
+launched to do a single task is given a brief carrying those hard rules and nothing
+from any instructions file; whether its host loads the instructions files for it as
+well differs from host to host. So an agent doing implementation work could delete
+a test with nothing in front of it saying to ask first.
+
+`zoe-sdlc-adopt` now asks the director which of the five points the project keeps,
+and writes those into the charter's hard rules.
+
+**If you adopted an earlier version,** ask your director which of the five points
+your project keeps, and add them to your charter's hard rules as things to ask
+first.
 
 ## 0.5.0 — 2026-08-21
 
