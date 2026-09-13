@@ -43,10 +43,11 @@ zoe-sdlc/hosts/claude-code/check-install.sh
 ```
 
 The leading path is wherever you put this tree — `zoe-sdlc/` above, to match the import
-example earlier. Run it from the project root rather than from the directory it lives in,
-because that is where it looks for your `CLAUDE.md`, `.claude/CLAUDE.md` and
-`.claude/skills/`. It also reads `~/.claude/CLAUDE.md`, since an import written there loads
-too.
+example earlier. Run it from your project root. It checks the directory it is run from and
+cannot tell whether that is your project, so run from anywhere else it reports an install that
+is not there; its last line names the directory it checked. There it looks for your
+`CLAUDE.md`, `.claude/CLAUDE.md` and `.claude/skills/`, and it also reads `~/.claude/CLAUDE.md`
+and `~/.claude/skills/`, since what is there loads too.
 
 With no argument it checks the base in the tree it sits in, which is right whenever you keep
 this tree whole. If you keep `base/` apart from this folder, pass its path:
@@ -65,7 +66,7 @@ existing `CLAUDE.md` and the merge got missed.
 
 The two non-zero exits mean different things: **1** is the check running and finding faults
 in your install; **2** is the check unable to run at all, because it could not find the base
-or was not run from your project root — its message says which, and what to do.
+— pass its path and run it again.
 
 It is worth running again after any change to your skill links or your `CLAUDE.md`, and it
 is cheap to add to whatever already runs your project's checks.

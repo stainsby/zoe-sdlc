@@ -18,7 +18,7 @@ installed it wrongly is the one thing that cannot then report the fact.
 
 The script checks that the instructions import resolves as written and loads this
 copy of the base rather than another, that every skill the base ships is linked to
-this copy, and that no link in `.claude/skills/` dangles —
+this copy, in your project or in `~/.claude/skills/`, and that no skill link dangles —
 the last of these catching a skill removed or renamed by an upgrade, which leaves
 a link behind that a check looking only at current skills never visits.
 

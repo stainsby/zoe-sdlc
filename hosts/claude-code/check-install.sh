@@ -10,9 +10,10 @@
 # Usage, from your project root — the leading path is wherever you put this tree:
 #   zoe-sdlc/hosts/claude-code/check-install.sh [path-to-base]
 #
-# Run it from the project root, not from the directory it lives in: that is where it looks
-# for CLAUDE.md, .claude/CLAUDE.md and .claude/skills/. It also reads ~/.claude/CLAUDE.md,
-# because an import written there loads too.
+# Run it from your project root. It checks the directory it is run from and cannot tell
+# whether that is your project, so its last line names the directory it checked. There it
+# looks for CLAUDE.md, .claude/CLAUDE.md and .claude/skills/; it also reads
+# ~/.claude/CLAUDE.md and ~/.claude/skills/, because what is there loads too.
 #
 # With no argument it checks the base in the tree it sits in, which is right whenever this
 # tree is kept whole. Pass the path to base/ only if you keep base/ apart from this folder.
@@ -21,10 +22,9 @@
 #
 # Prints FAIL lines and reads only. Two different non-zero exits:
 #   1 — it ran and found faults in the install.
-#   2 — it could not run the check at all: it could not find the base, or was not run from
-#       the project root.
+#   2 — it could not run the check at all, because it could not find the base.
 set -uo pipefail
-# A cd that finds its directory through CDPATH also prints it, which would corrupt every
+# A cd that finds its directory through CDPATH also prints it, which would corrupt the
 # $(cd … && pwd) below.
 unset CDPATH
 
@@ -37,15 +37,6 @@ is_base() {
   [ -f "$1/instructions/zoe-sdlc.instructions.md" ] && return 0
   for d in "$1"/skills/zoe-sdlc-*/; do [ -d "$d" ] && return 0; done
   return 1
-}
-
-# The check reads the project it is run from, and cannot tell where the project root is. A
-# directory with neither a CLAUDE.md nor a .claude/skills/ is not one anything was installed
-# into, so say that, rather than report every missing piece as a fault in an install that may
-# be fine.
-[ -e CLAUDE.md ] || [ -d .claude/skills ] || {
-  echo "FAIL: no CLAUDE.md and no .claude/skills/ in $(pwd) — run this from your project root" >&2
-  exit 2
 }
 
 base="${1:-}"
@@ -62,6 +53,7 @@ is_base "$base" || {
 }
 
 fault=0
+here="$(pwd)"
 
 # --- 1. The instructions import resolves --------------------------------------
 # A relative `@` import resolves against the directory of the file containing it, so test
@@ -101,7 +93,10 @@ ships=$(find "$base/skills" -mindepth 1 -maxdepth 1 -type d | wc -l)
 linked=0
 for d in "$base"/skills/*/; do
   name="$(basename "$d")"
+  # The host loads skills from the project's .claude/skills/ and from ~/.claude/skills/, so
+  # look in the project first, then in the home directory.
   l=".claude/skills/$name"
+  [ -e "$l" ] || [ -L "$l" ] || l="$HOME/.claude/skills/$name"
   # -ef asks whether two paths are the same directory, however either is reached.
   if [ "$l" -ef "$base/skills/$name" ]; then
     linked=$((linked+1))
@@ -117,24 +112,26 @@ for d in "$base"/skills/*/; do
     # a second time.
     fault=1
   else
-    echo "FAIL: skill not linked into .claude/skills/: $name" >&2
+    echo "FAIL: skill not linked into .claude/skills/ or ~/.claude/skills/: $name" >&2
     fault=1
   fi
 done
 
-# --- 3. And no link in .claude/skills/ dangles, whoever put it there -----------
+# --- 3. And no skill link dangles ----------------------------------------------
 # Not the same test as above, which only looks at skills the base currently ships. A
 # skill removed or renamed by a base upgrade leaves a link behind that the loop above
-# never visits, and a dangling link is a skill the host silently does not load.
-for l in .claude/skills/*; do
+# never visits, and a dangling link is a skill the host silently does not load. Every
+# link in the project's .claude/skills/ is this check's business; in ~/.claude/skills/,
+# only this base's own names are.
+for l in .claude/skills/* "$HOME"/.claude/skills/zoe-sdlc-*; do
   [ -L "$l" ] || continue
   [ -e "$l" ] || { echo "FAIL: dangling skill link: $l" >&2; fault=1; }
 done
 
 if [ "$fault" -eq 0 ]; then
   echo "ok   skills  $linked of $ships linked from $base/skills/"
-  echo "ZOE SDLC install check: $n import, $linked skills — OK"
+  echo "ZOE SDLC install check of $here: $n import, $linked skills — OK"
 else
-  echo "ZOE SDLC install check: FAILED ($linked of $ships skills linked, $n import line(s))" >&2
+  echo "ZOE SDLC install check of $here: FAILED ($linked of $ships skills linked, $n import line(s))" >&2
 fi
 exit "$fault"
