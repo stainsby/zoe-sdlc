@@ -16,11 +16,17 @@
 #
 # With no argument it checks the base in the tree it sits in, which is right whenever this
 # tree is kept whole. Pass the path to base/ only if you keep base/ apart from this folder.
+# Either way it checks that your import and your skill links lead into that base, and not
+# into some other copy of it.
 #
 # Prints FAIL lines and reads only. Two different non-zero exits:
 #   1 — it ran and found faults in the install.
-#   2 — it could not run the check at all, because it could not find the base.
+#   2 — it could not run the check at all: it could not find the base, or was not run from
+#       the project root.
 set -uo pipefail
+# A cd that finds its directory through CDPATH also prints it, which would corrupt every
+# $(cd … && pwd) below.
+unset CDPATH
 
 # Is this directory actually the ZOE SDLC base, rather than some other tree that happens
 # to have a skills/ in it? Every skill this base ships is prefixed with the enterprise's
@@ -33,22 +39,30 @@ is_base() {
   return 1
 }
 
+# The physical directory a path leads to, with links followed, so two routes to one place
+# compare equal.
+real_dir() { ( cd -- "$1" 2>/dev/null && pwd -P ); }
+
 base="${1:-}"
 if [ -z "$base" ]; then
-  # This script sits at hosts/claude-code/ in the tree, so the base is two levels up. Shown
-  # relative to the project root where it lies inside it, which is how the reader put it.
-  here="$(cd "$(dirname "$0")/../.." 2>/dev/null && pwd)" && here="${here#"$PWD"/}/base"
-  is_base "$here" && base="$here"
+  # This script sits at hosts/claude-code/ in the tree, so the base is two levels up. The
+  # tree has to lie inside the directory the check runs from, because that is where it looks
+  # for CLAUDE.md and .claude/; run from anywhere else, it would report faults that are not
+  # there. The base is shown relative to that directory, which is how the reader put it.
+  tree="$(real_dir "$(dirname -- "$0")/../..")"
+  root="$(pwd -P)"
+  case "$tree" in
+    "$root"/*) base="${tree#"$root"/}/base" ;;
+    *) echo "FAIL: the tree this script sits in is not inside the directory you ran it from. Run it from your project root, or pass the path to the base: $0 path/to/base" >&2
+       exit 2 ;;
+  esac
 fi
 
-[ -n "$base" ] || {
-  echo "FAIL: cannot find the ZOE SDLC base beside this script. Pass its path: $0 path/to/base" >&2
-  exit 2
-}
 is_base "$base" || {
-  echo "FAIL: $base does not look like the ZOE SDLC base — no instructions/zoe-sdlc.instructions.md and no zoe-sdlc-* skill under $base/skills/" >&2
+  echo "FAIL: $base does not look like the ZOE SDLC base — no instructions/zoe-sdlc.instructions.md and no zoe-sdlc-* skill under $base/skills/. Pass its path: $0 path/to/base" >&2
   exit 2
 }
+base_real="$(real_dir "$base")"
 
 fault=0
 
@@ -69,8 +83,13 @@ for f in CLAUDE.md .claude/CLAUDE.md "$HOME/.claude/CLAUDE.md"; do
       \~)  t="$HOME" ;;
       *)   t="$(dirname "$f")/$p" ;;
     esac
-    if [ -f "$t" ]; then echo "ok   import  $f -> $t"
-    else echo "FAIL: import does not resolve: $f -> $t" >&2; fault=1; fi
+    if [ ! -f "$t" ]; then
+      echo "FAIL: import does not resolve: $f -> $t" >&2; fault=1
+    elif [ "$(real_dir "$(dirname -- "$t")")/$(basename -- "$t")" != "$base_real/instructions/zoe-sdlc.instructions.md" ]; then
+      echo "FAIL: import loads a different copy of the base, not $base: $f -> $t" >&2; fault=1
+    else
+      echo "ok   import  $f -> $t"
+    fi
   done
 done
 [ "$n" -gt 0 ] || {
@@ -87,7 +106,12 @@ for d in "$base"/skills/*/; do
   name="$(basename "$d")"
   l=".claude/skills/$name"
   if [ -e "$l" ]; then
-    linked=$((linked+1))
+    if [ "$(real_dir "$l")" = "$base_real/skills/$name" ]; then
+      linked=$((linked+1))
+    else
+      echo "FAIL: $l is not the skill in $base — it leads to $(real_dir "$l")" >&2
+      fault=1
+    fi
   elif [ -L "$l" ]; then
     # A link that is there but points at nothing. Counted as a fault here, but reported
     # once only — by the sweep below, which visits every link and would otherwise say it

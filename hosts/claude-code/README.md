@@ -55,6 +55,9 @@ this tree whole. If you keep `base/` apart from this folder, pass its path:
 path/to/check-install.sh path/to/base
 ```
 
+Either way, it checks that your import line and every skill link lead into that base, and not
+into some other copy of it — a new release put beside the old one, say.
+
 A good install prints no `FAIL` and exits zero. The counts in its last line are the point,
 not decoration: a check that only inspects what it happens to find will pass when it finds
 nothing, which is exactly what happens when an import line was meant to be merged into an
@@ -62,7 +65,7 @@ existing `CLAUDE.md` and the merge got missed.
 
 The two non-zero exits mean different things: **1** is the check running and finding faults
 in your install; **2** is the check unable to run at all, because it could not find the base
-— pass its path and run it again.
+or was not run from your project root — its message says which, and what to do.
 
 It is worth running again after any change to your skill links or your `CLAUDE.md`, and it
 is cheap to add to whatever already runs your project's checks.

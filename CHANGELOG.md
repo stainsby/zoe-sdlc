@@ -16,8 +16,9 @@ install took. A broken `@` import produces no warning: the session starts, looks
 entirely normal, and runs with no instructions and therefore no gates. An AI that
 installed it wrongly is the one thing that cannot then report the fact.
 
-The script checks that the instructions import resolves as written, that every
-skill the base ships is linked, and that no link in `.claude/skills/` dangles —
+The script checks that the instructions import resolves as written and loads this
+copy of the base rather than another, that every skill the base ships is linked to
+this copy, and that no link in `.claude/skills/` dangles —
 the last of these catching a skill removed or renamed by an upgrade, which leaves
 a link behind that a check looking only at current skills never visits.
 
@@ -31,7 +32,7 @@ you keep `base/` apart from the rest of this repository.
 
 ### Approval points reach every agent doing the work
 
-The base's instructions name five points where a person approves before work goes
+The base's instructions name the points where a person approves before work goes
 on, among them deleting or weakening a test. Under the ZOE kernel, only the
 charter's hard rules make an action gated. And since kernel 1.4.0, an agent
 launched to do a single task is given a brief carrying those hard rules and nothing
@@ -39,10 +40,14 @@ from any instructions file; whether its host loads the instructions files for it
 well differs from host to host. So an agent doing implementation work could delete
 a test with nothing in front of it saying to ask first.
 
-`zoe-sdlc-adopt` now asks the director which of the five points the project keeps,
-and writes those into the charter's hard rules.
+`zoe-sdlc-adopt` now asks the director which of the approval points the project
+keeps, and writes those into the charter's hard rules.
 
-**If you adopted an earlier version,** ask your director which of the five points
+The list itself grows from five points to seven. Two that the skills already
+required were missing from it: skipping a step in the order every change follows,
+and adding a task to a batch of work already under way.
+
+**If you adopted an earlier version,** ask your director which of the seven points
 your project keeps, and add them to your charter's hard rules as things to ask
 first.
 
