@@ -6,12 +6,14 @@
 
 ## Oversight
 
-By default, human approval is needed at five points in this process:
+By default, human approval is needed at these points in this process:
 
 - a new or changed user story or specification, before implementation starts;
+- skipping a step in the order every change follows (`zoe-sdlc-sequencing`);
 - a proposed departure from the architecture a specification sets out;
 - adopting an external component — something the project uses but does not build
   itself (`zoe-sdlc-components`);
+- adding a task to a batch of work already under way (`zoe-sdlc-develop`);
 - deleting or weakening a test;
 - deciding what a piece of work that serves no recorded intent actually means,
   when an audit finds one.

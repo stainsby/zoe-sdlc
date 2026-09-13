@@ -30,7 +30,7 @@ Steps:
    It applies to everything under it automatically.
 
    **This process's approval points go into its hard rules.** The instructions
-   list five points where a person approves before work goes on. Ask the
+   list the points where a person approves before work goes on. Ask the
    director which of them this project keeps, and write those into the
    charter's hard rules as things to ask first. Only the hard rules make an
    action gated, and they are what every agent doing the work is given,
