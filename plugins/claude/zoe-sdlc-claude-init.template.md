@@ -1,6 +1,6 @@
 ---
 name: zoe-sdlc-claude-init
-description: Puts ZOE SDLC's instructions into a Claude project already set up as a ZOE. Use once after installing the plugin, to repair them, or for an approved upgrade.
+description: Puts ZOE SDLC's instructions into a Claude project already set up as a ZOE. Use after installing the plugin, again after updating it, or to repair them.
 ---
 
 # Setting up ZOE SDLC in a Claude environment
@@ -101,21 +101,24 @@ kernel's `.zoe/`, so neither setup skill touches the other's files.
      done
    done
    ls -l .zoe-sdlc/instructions/zoe-sdlc.instructions.md .zoe-sdlc/VERSION
+   cmp .zoe-sdlc/instructions/zoe-sdlc.instructions.md "${CLAUDE_PLUGIN_ROOT}"/skills/zoe-sdlc-claude-init/assets/zoe-sdlc.instructions.md && echo INSTRUCTIONS-MATCH
    diff .zoe-sdlc/VERSION "${CLAUDE_PLUGIN_ROOT}/VERSION" && echo VERSION-MATCHES
    ```
 
    In Claude Code, exactly one line must print `RESOLVES` and none `DANGLING`. A second
-   import of the same file loads it twice. In Cowork, the check is the person's confirmation,
-   and your report says it rests on their word. Where neither applies, the check is that the
-   file is in the workspace and complete. In every case the `diff` must print
-   `VERSION-MATCHES` and nothing else. If part of this is refused, count the same things with
-   your file tools and say which you used. State a count and a verdict, not an impression.
+   import of the same file loads it twice. In Cowork, the import is the person's confirmation,
+   and your report says it rests on their word. Where neither applies, there is no import to
+   count. In every case `cmp` must print `INSTRUCTIONS-MATCH` and the `diff` `VERSION-MATCHES`,
+   and nothing else. A copy that resolves but is empty or shortened loads without the approval
+   points, which is what this step exists to catch. If part of this is refused, compare the same
+   things with your file tools and say which you used. State a count and a verdict, not an
+   impression.
 
 ## A newer release of the plugin
 
 When the plugin has been updated, `.zoe-sdlc/VERSION` and the plugin's own `VERSION` differ.
 The skills in use are then the newer release's, while the pinned instructions are still the
-older one's. Say so. Read the entries between the two versions in the plugin's `CHANGELOG.md`,
+older one's. Nothing notices this until someone runs this skill, so when you find it, say so. Read the entries between the two versions in the plugin's `CHANGELOG.md`,
 put them to the director, and only on their approval run steps 3 to 5 again.
 
 ## Then hand over

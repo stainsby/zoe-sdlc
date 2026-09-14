@@ -51,8 +51,9 @@ mkdir -p "$out/.claude-plugin" "$out/skills" "$(dirname "$zip_out")"
 # The kernel's plugin is a dependency. Claude Code resolves a dependency inside the
 # catalogue of the plugin that declares it, which is why both are listed in the same
 # one, and enabling this plugin enables the kernel's too. The range allows any 1.x
-# from the kernel release this base was last checked against. A kernel 2.0 in the
-# catalogue leaves this plugin switched off until a release of the base accepts it.
+# from the kernel release this base was last checked against. Outside it, Claude Code
+# reports a dependency error and disables this plugin until a release of the base
+# accepts the newer kernel.
 echo "manifest"
 python3 - "$version" "$out" <<'PY'
 import json, re, sys, pathlib
@@ -88,11 +89,41 @@ note "ok   plugin.json version -> $version, depends on zoe-kernel ^1.4.1 (no com
 
 # ---------------------------------------------------------------- skills --
 # Copied, never edited in place: regenerated from base/skills/ every build.
+#
+# Only the files git would keep are copied: tracked, or new and not ignored. Running the
+# Python example leaves a __pycache__/ that .gitignore ignores, and it must not ship. Outside
+# a git work tree, such as a copy of the tree made for testing, there is nothing to ask, so
+# every file is copied and the build says so.
 echo "skills"
+if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  in_git=1
+else
+  in_git=0
+  note "note not a git work tree: every file under base/skills/ is copied, ignored ones included"
+fi
 n=0
 for d in base/skills/*/; do
   [ -f "$d/SKILL.md" ] || { bad "no SKILL.md in $d"; continue; }
-  cp -R "${d%/}" "$out/skills/$(basename "$d")"; n=$((n+1))
+  name="$(basename "$d")"
+  if [ "$in_git" -eq 1 ]; then
+    python3 - "${d%/}" "$out/skills/$name" <<'PY'
+import os, pathlib, shutil, subprocess, sys
+src, dest = sys.argv[1], pathlib.Path(sys.argv[2])
+listed = subprocess.run(
+    ["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard", "--", src],
+    check=True, capture_output=True).stdout.split(b"\0")
+for raw in filter(None, listed):
+    path = raw.decode()
+    if not os.path.lexists(path):
+        continue  # tracked but deleted in the working tree
+    target = dest / os.path.relpath(path, src)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(path, target, follow_symlinks=False)  # a symlink stays one, for the gate below
+PY
+  else
+    cp -R "${d%/}" "$out/skills/$name"
+  fi
+  n=$((n+1))
 done
 note "ok   $n base skills copied"
 [ "$n" -eq "$(ls -d base/skills/*/ | wc -l)" ] || bad "not every base skill was copied"
@@ -178,9 +209,13 @@ fi
 
 # -------------------------------------------------------------- packaging --
 # Built with python rather than zip(1) so it is reproducible: entries sorted and
-# every timestamp fixed.
+# every timestamp fixed. It is written beside the staging tree first, and replaces
+# dist/claude/plugin.zip only if every check above passed, so a failed build never
+# leaves a faulty package where the committed one was.
 echo "package"
-python3 - "$out" "$zip_out" <<'PY'
+zip_tmp="$out.zip"
+trap 'rm -rf "$out" "$zip_tmp"' EXIT
+python3 - "$out" "$zip_tmp" <<'PY'
 import pathlib, sys, zipfile
 
 tree, out = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2])
@@ -193,8 +228,15 @@ with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
         info.compress_type = zipfile.ZIP_DEFLATED
         info.external_attr = (0o755 if f.stat().st_mode & 0o100 else 0o644) << 16
         z.writestr(info, f.read_bytes())
-print(f"  ok   {out} ({out.stat().st_size} bytes, {len(files)} files)")
+print(f"  built {len(files)} files")
 PY
+if [ "$fail" -eq 0 ]; then
+  chmod 644 "$zip_tmp"
+  mv "$zip_tmp" "$zip_out"
+  note "ok   $zip_out ($(wc -c < "$zip_out") bytes)"
+else
+  note "not written: $zip_out is left as it was, because a check above failed"
+fi
 
 echo
 if [ "$fail" -eq 0 ]; then echo "PASS"; else echo "FAIL"; fi

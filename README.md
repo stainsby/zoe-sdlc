@@ -42,8 +42,8 @@ the first draft of your charter and into the first cycle.
 Alternatively, get your AI to read *this* file and help you wire in the
 instructions and skills.
 
-We are also investigating a Claude plugin for ZOE SDLC, like the one the ZOE
-kernel now has, to make setup even smoother — stay tuned.
+On Claude Code or Cowork, ZOE SDLC also installs as a plugin, which brings the
+kernel's plugin with it — see [`plugins/claude/README.md`](plugins/claude/README.md).
 
 ## Adaptability
 

@@ -27,8 +27,9 @@ in the project that is to become the enterprise:
 1. ask Claude to set ZOE up, which runs the kernel's `zoe-claude-init`;
 2. ask Claude to set up ZOE SDLC, which runs this plugin's `zoe-sdlc-claude-init`.
 
-Where a surface offers no command line, the same steps are in its own interface. A package at
-`dist/claude/plugin.zip` can also be uploaded directly on surfaces that take a plugin as a file.
+Where a Claude product offers no command line, the same steps are in its own interface. A
+package at `dist/claude/plugin.zip` can also be uploaded directly to the Claude products that
+take a plugin as a file.
 Claude's documentation does not say whether an uploaded plugin's dependency is installed for
 it, so upload the kernel's package first.
 
@@ -70,12 +71,15 @@ confirmation, and the skill says so.
 ## Upgrades
 
 A plugin update brings new skills straight away, while the pinned instructions stay at the
-older release until the director approves the change. The setup skill notices the two versions
-differ and reads out what the changelog says moved.
+older release until the director approves the change. **Nothing notices this on its own.**
+After updating the plugin, ask Claude to run `zoe-sdlc-claude-init` again. It finds that the
+project's `.zoe-sdlc/VERSION` and the plugin's differ, reads out what the changelog says changed
+between them, and copies nothing until the director approves.
 
 The dependency on the kernel allows any 1.x release from 1.4.1, the kernel this base was last
-checked against. If the catalogue offers a kernel 2.0, this plugin is switched off until a
-release of the base accepts it.
+checked against. If the kernel's plugin is outside that range, Claude Code reports a dependency
+error and disables this plugin until it is resolved, which here means a release of the base
+that accepts the newer kernel.
 
 ## Building
 
@@ -85,11 +89,12 @@ release of the base accepts it.
 plugins/claude/build.sh
 ```
 
-It reads the version from `base/VERSION` and writes it into `plugin.json`, copies the base's
-skills in, generates `zoe-sdlc-claude-init` from `zoe-sdlc-claude-init.template.md`, the
-base's instructions file and `base/VERSION`, adds the licence, `VERSION` and `CHANGELOG.md`,
-checks the counts and versions agree, validates the plugin with `claude plugin validate
---strict`, and writes the package.
+It reads the version from `base/VERSION` and writes it into `plugin.json`, copies in the base's
+skills, leaving out any file git ignores, generates `zoe-sdlc-claude-init` from
+`zoe-sdlc-claude-init.template.md`, the base's instructions file and `base/VERSION`, adds the
+licence, `VERSION` and `CHANGELOG.md`, checks the counts and versions agree, and validates the
+plugin with `claude plugin validate --strict`. It writes the package only if every check
+passed, so a failed build leaves the committed package as it was.
 
 The package always lands at `dist/claude/plugin.zip`, with no version in the path, so anything
 pointing at it keeps pointing at it. It is built with a sorted file list and fixed timestamps,

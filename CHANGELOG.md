@@ -70,7 +70,7 @@ but the instructions a project runs under stay as they are until its director ap
 the change.
 
 `plugins/claude/build.sh` builds the package, and `plugins/claude/README.md` covers what
-arrives, how the instructions load on each surface, and upgrades. Installing by hand, as
+arrives, how the instructions load in each Claude product, and upgrades. Installing by hand, as
 `hosts/claude-code/README.md` describes, still works.
 
 ## 0.5.0 — 2026-08-21
