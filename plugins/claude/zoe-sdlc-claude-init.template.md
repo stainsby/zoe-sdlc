@@ -48,9 +48,10 @@ kernel's `.zoe/`, so neither setup skill touches the other's files.
    Last, compare what is already in `.zoe-sdlc/` with this plugin's own `VERSION`:
 
    - **Neither file is there:** a first install. Go on to step 3.
-   - **`.zoe-sdlc/VERSION` matches the plugin's:** a repair. Go on to step 3, which puts back the
-     released text of the version the project already runs. If the copy there differed from that
-     text, say so in your report.
+   - **`.zoe-sdlc/VERSION` matches the plugin's:** a repair. First compare the copy of the
+     instructions there with the released text, using step 5's `cmp` line, and note the result.
+     Then go on to step 3, which puts back the released text of the version the project already
+     runs. If the copy had differed, say so in your report.
    - **`.zoe-sdlc/VERSION` is older than the plugin's:** an upgrade. The plugin has been
      updated, so the skills in use are the newer release's while the pinned instructions are
      still the older one's: say so. Read the entries between the two versions in the plugin's
