@@ -1,0 +1,128 @@
+---
+name: zoe-sdlc-claude-init
+description: Puts ZOE SDLC's instructions into a Claude project already set up as a ZOE. Use once after installing the plugin, to repair them, or for an approved upgrade.
+---
+
+# Setting up ZOE SDLC in a Claude environment
+
+This is a one-off. It puts the base's instructions and version into the workspace and makes
+the environment load the instructions beside the kernel's. The base's skills stay in this
+plugin, and once this has run, this skill is done.
+
+Run it again only to repair instructions that have gone missing, or to apply a newer release
+of the base that the director has approved. Every step below either changes nothing or fixes
+a difference.
+
+The instructions file and `VERSION` travel with this skill, in its own `assets/` folder, so
+what lands in the workspace is a copy of the released text rather than anything retyped.
+
+## What it writes
+
+- `.zoe-sdlc/instructions/zoe-sdlc.instructions.md` — a pinned copy of the base's
+  instructions: the points where a person approves before work goes on, and how everything
+  the project produces is written.
+- `.zoe-sdlc/VERSION` — the release of the base that file and this plugin's skills came
+  from.
+
+**The copy is pinned.** A plugin update replaces the skills for every project on the machine;
+it never replaces these files. The rules a project runs under change only when the director
+approves a newer release and this skill runs again. `.zoe-sdlc/` is kept apart from the
+kernel's `.zoe/`, so neither setup skill touches the other's files.
+
+## Steps
+
+1. **Confirm where.** State the directory you are about to write into, and have the person
+   confirm it is the project root. Do not infer it from where a shell happens to be.
+
+2. **Check the kernel is set up there first.** This base sits on the ZOE kernel. Look for the
+   kernel's instructions: `.zoe/instructions/zoe.instructions.md` with an import line pointing
+   at it, or, where the kernel was installed by hand, a kernel tree with its own import line.
+   If neither is there, stop and say so: the kernel comes first, by asking Claude to set ZOE
+   up.
+
+   Then check that the base is not already installed by hand: a tree holding
+   `base/instructions/zoe-sdlc.instructions.md` with an import line pointing into it. If it
+   is, this skill is not for that project. Stop and say so, rather than writing a second copy
+   beside the first.
+
+3. **Put the instructions file and `VERSION` in the workspace.** Where you can run commands:
+
+   ```sh
+   mkdir -p .zoe-sdlc/instructions
+   cp "${CLAUDE_PLUGIN_ROOT}"/skills/zoe-sdlc-claude-init/assets/zoe-sdlc.instructions.md .zoe-sdlc/instructions/
+   cp "${CLAUDE_PLUGIN_ROOT}"/skills/zoe-sdlc-claude-init/assets/VERSION .zoe-sdlc/VERSION
+   ```
+
+   Reading the plugin's files may be refused until you are given access to them. If it is, say
+   so plainly and offer the fix rather than working around it: the person approves the read
+   when prompted, or runs `/add-dir ${CLAUDE_PLUGIN_ROOT}` first. Where you have no shell, read
+   each file in this skill's `assets/` folder and write it under the same name, the `.md` file
+   into `.zoe-sdlc/instructions/` and `VERSION` beside that folder, and say that is what you did.
+   Either way it is a copy: never retype the text, and never summarise or tidy it.
+
+   **Do not go on to step 4 until both files are really there.** An import pointing at a file
+   that is not there fails silently: the session starts, looks normal, and runs without the
+   base's approval points.
+
+4. **Make the environment load it.**
+
+   **In Claude Code**, add this line to the workspace's `CLAUDE.md`, beside the kernel's import
+   lines:
+
+   ```
+   @.zoe-sdlc/instructions/zoe-sdlc.instructions.md
+   ```
+
+   Add that line and change nothing else. An import resolves relative to the file holding it,
+   so inside `.claude/CLAUDE.md` the line reads
+   `@../.zoe-sdlc/instructions/zoe-sdlc.instructions.md`.
+
+   **In Cowork**, ask the person to open the project's settings and add this to its
+   **Instructions**, after the sentences the kernel's setup gave them, then confirm they have
+   done it before you go on:
+
+   > Then read `.zoe-sdlc/instructions/zoe-sdlc.instructions.md` from the same folder and
+   > follow it.
+
+   You cannot set that field yourself, so do not claim it is done on their word alone: ask them
+   to confirm, and say in your report that it rests on their confirmation.
+
+   **Where the environment offers neither**, there is nothing to add. Record in the
+   enterprise's index that the base's instructions are read from the workspace at the start of
+   every session, and that nothing enforces it.
+
+5. **Check it, and give a count.** Nothing warns you when an import points at nothing.
+
+   ```sh
+   for f in CLAUDE.md .claude/CLAUDE.md; do
+     [ -f "$f" ] || continue
+     grep -o '^@[^ ]*zoe-sdlc\.instructions\.md' "$f" | while IFS= read -r l; do
+       if [ -f "$(dirname "$f")/${l#@}" ]; then echo "RESOLVES  $f: $l"; else echo "DANGLING  $f: $l"; fi
+     done
+   done
+   ls -l .zoe-sdlc/instructions/zoe-sdlc.instructions.md .zoe-sdlc/VERSION
+   diff .zoe-sdlc/VERSION "${CLAUDE_PLUGIN_ROOT}/VERSION" && echo VERSION-MATCHES
+   ```
+
+   In Claude Code, exactly one line must print `RESOLVES` and none `DANGLING`. A second
+   import of the same file loads it twice. In Cowork, the check is the person's confirmation,
+   and your report says it rests on their word. Where neither applies, the check is that the
+   file is in the workspace and complete. In every case the `diff` must print
+   `VERSION-MATCHES` and nothing else. If part of this is refused, count the same things with
+   your file tools and say which you used. State a count and a verdict, not an impression.
+
+## A newer release of the plugin
+
+When the plugin has been updated, `.zoe-sdlc/VERSION` and the plugin's own `VERSION` differ.
+The skills in use are then the newer release's, while the pinned instructions are still the
+older one's. Say so. Read the entries between the two versions in the plugin's `CHANGELOG.md`,
+put them to the director, and only on their approval run steps 3 to 5 again.
+
+## Then hand over
+
+The base's instructions now load. The approval points a project keeps still have to go into
+its charter's hard rules, which is the first step of `zoe-sdlc-adopt`. If the project has no
+charter yet, the kernel's setup comes first. **Do not start either from this skill.**
+
+While setting up: change nothing else in the workspace, never overwrite a file you did not
+create, and report what this environment cannot do rather than quietly working around it.

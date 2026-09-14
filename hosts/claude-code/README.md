@@ -5,6 +5,9 @@ The base is host-neutral; this folder is what Claude Code, specifically, needs. 
 proper. Adapt it freely. The base's prose rules bind regardless; these files add packaging,
 not new behaviour. The same arrangement as the ZOE kernel's own `hosts/claude-code/`.
 
+This folder is for installing the base by hand. If you install it as a plugin instead, none of
+it applies: see [`plugins/claude/README.md`](../../plugins/claude/README.md).
+
 ## Contents
 
 - `check-install.sh` — verifies that this base is actually installed into your project.

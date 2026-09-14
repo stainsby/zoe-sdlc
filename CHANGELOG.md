@@ -51,6 +51,28 @@ and adding a task to a batch of work already under way.
 your project keeps, and add them to your charter's hard rules as things to ask
 first.
 
+### A plugin for Claude
+
+ZOE SDLC can now be installed as a plugin for Claude Code and Cowork, from the same
+catalogue as the ZOE kernel's plugin:
+
+```sh
+claude plugin marketplace add stainsby/zoe-plugins
+claude plugin install zoe-sdlc@zoe
+claude plugin enable zoe-sdlc@zoe
+```
+
+It depends on the kernel's plugin, so installing it brings the kernel's too. A plugin
+cannot make a session read the base's instructions, so it adds one skill,
+`zoe-sdlc-claude-init`, which copies them into the project's `.zoe-sdlc/` folder and
+adds the line that loads them. That copy is pinned: a plugin update brings new skills,
+but the instructions a project runs under stay as they are until its director approves
+the change.
+
+`plugins/claude/build.sh` builds the package, and `plugins/claude/README.md` covers what
+arrives, how the instructions load on each surface, and upgrades. Installing by hand, as
+`hosts/claude-code/README.md` describes, still works.
+
 ## 0.5.0 — 2026-08-21
 
 The largest change to the base since it was first written, and the first one

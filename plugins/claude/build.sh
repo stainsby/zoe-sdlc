@@ -1,0 +1,201 @@
+#!/usr/bin/env bash
+#
+# Build and check the ZOE SDLC plugin for Anthropic's Claude products. From the
+# repository root:
+#
+#   plugins/claude/build.sh
+#
+# It assembles the plugin in a temporary directory and packages it as
+# dist/claude/plugin.zip: one fixed path, with no version in it, the same as the
+# ZOE kernel's own plugin.
+#
+# WHERE THE CATALOGUE IS. This plugin is listed in the kernel's catalogue,
+# stainsby/zoe-plugins, beside the kernel's own plugin. That repository's
+# scripts/update-plugin.py unpacks this zip and copies name, version, description
+# and author from plugin.json into the catalogue entry. So this build never touches
+# the catalogue, and the version is typed in one place: base/VERSION.
+#
+# WHY IT ASSEMBLES rather than pointing plugin.json at base/skills/. The kernel's
+# plugins/claude/README.md gives the reason: Claude Code, Cowork and
+# `claude plugin validate` read component paths in plugin.json differently, and no
+# value satisfies all three. So nothing is declared, and everything is placed where
+# every surface looks by default.
+#
+# Re-running on unchanged inputs changes nothing, the zip included: it is built
+# with fixed timestamps, so its bytes depend on content alone.
+set -euo pipefail
+
+cd "$(dirname "$0")/../.."
+[ $# -eq 0 ] || { echo "usage: plugins/claude/build.sh (no arguments)" >&2; exit 2; }
+
+src="plugins/claude"
+zip_out="dist/claude/plugin.zip"
+
+# The assembled tree is staging, not an artifact: only the zip is committed.
+out="$(mktemp -d)"
+trap 'rm -rf "$out"' EXIT
+
+fail=0
+note() { printf '  %s\n' "$*"; }
+bad()  { printf '  FAIL %s\n' "$*"; fail=1; }
+
+version="$(cat base/VERSION)"
+echo "ZOE SDLC plugin for Claude — base $version"
+
+mkdir -p "$out/.claude-plugin" "$out/skills" "$(dirname "$zip_out")"
+
+# ---------------------------------------------------------------- manifest --
+# defaultEnabled is false, as the kernel's is: the base belongs in a project that is
+# meant to be a ZOE, not in every project on the machine.
+#
+# The kernel's plugin is a dependency. Claude Code resolves a dependency inside the
+# catalogue of the plugin that declares it, which is why both are listed in the same
+# one, and enabling this plugin enables the kernel's too. The range allows any 1.x
+# from the kernel release this base was last checked against. A kernel 2.0 in the
+# catalogue leaves this plugin switched off until a release of the base accepts it.
+echo "manifest"
+python3 - "$version" "$out" <<'PY'
+import json, re, sys, pathlib
+version, out = sys.argv[1], pathlib.Path(sys.argv[2])
+
+manifest = {
+    "name": "zoe-sdlc",
+    "description": "ZOE SDLC — a skill set for running a software project with AI agents, on top of the ZOE kernel.",
+    "version": version,
+    "author": {"name": "Sam Stainsby", "email": "sam@stainsby.au"},
+    "homepage": "https://github.com/stainsby/zoe-sdlc",
+    "repository": "https://github.com/stainsby/zoe-sdlc",
+    "license": "MIT",
+    "keywords": ["zoe", "sdlc", "software", "specification", "testing"],
+    "defaultEnabled": False,
+    "dependencies": [{"name": "zoe-kernel", "version": "^1.4.1"}],
+}
+
+# The catalogue's own scripts/validate.py refuses these, so check them here first.
+problems = []
+if not re.fullmatch(r"[a-z0-9]+(-[a-z0-9]+)*", manifest["name"]):
+    problems.append("name is not kebab-case")
+for field in ("category", "tags", "source", "strict"):
+    if field in manifest:
+        problems.append(f"plugin.json carries the catalogue-only field {field}")
+if problems:
+    raise SystemExit("; ".join(problems))
+
+(out / ".claude-plugin" / "plugin.json").write_text(
+    json.dumps(manifest, indent=2, ensure_ascii=False) + "\n")
+PY
+note "ok   plugin.json version -> $version, depends on zoe-kernel ^1.4.1 (no component paths declared)"
+
+# ---------------------------------------------------------------- skills --
+# Copied, never edited in place: regenerated from base/skills/ every build.
+echo "skills"
+n=0
+for d in base/skills/*/; do
+  [ -f "$d/SKILL.md" ] || { bad "no SKILL.md in $d"; continue; }
+  cp -R "${d%/}" "$out/skills/$(basename "$d")"; n=$((n+1))
+done
+note "ok   $n base skills copied"
+[ "$n" -eq "$(ls -d base/skills/*/ | wc -l)" ] || bad "not every base skill was copied"
+
+# One skill is generated. A plugin cannot make a session read its instructions: a
+# CLAUDE.md at a plugin's root is not project context. So zoe-sdlc-claude-init
+# carries the base's instructions file and VERSION as assets, and copies them into
+# the project. The template's text is kept whole; only a banner is added after its
+# frontmatter, by string handling in python rather than sed or awk.
+python3 - "$src" "$out" <<'PY'
+import pathlib, sys
+src, out = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2])
+
+template = src / "zoe-sdlc-claude-init.template.md"
+sources = sorted(pathlib.Path("base/instructions").glob("*.md"))
+if not sources:
+    raise SystemExit("no instruction files found under base/instructions/")
+
+text = template.read_text()
+banner = (
+    "<!-- GENERATED by plugins/claude/build.sh from\n"
+    "     plugins/claude/zoe-sdlc-claude-init.template.md. Do not edit: edit the template\n"
+    "     and build again. The instruction file in assets/ is a copy of base/instructions/,\n"
+    "     and VERSION is a copy of base/VERSION. -->\n"
+)
+head, sep, rest = text.partition("---\n")
+fm, sep2, tail = rest.partition("---\n")
+if head or not sep or not sep2:
+    raise SystemExit("the template does not open with a frontmatter block")
+
+skill = out / "skills" / "zoe-sdlc-claude-init"
+(skill / "assets").mkdir(parents=True, exist_ok=True)
+(skill / "SKILL.md").write_text(sep + fm + sep2 + "\n" + banner + tail)
+for f in sources:
+    (skill / "assets" / f.name).write_bytes(f.read_bytes())
+(skill / "assets" / "VERSION").write_bytes(pathlib.Path("base/VERSION").read_bytes())
+print(f"  ok   zoe-sdlc-claude-init generated, {len(sources)} instruction file(s) and VERSION as assets")
+PY
+
+# The licence travels with the package, which is distributed apart from this repository.
+cp LICENSE "$out/LICENSE"
+note "ok   LICENSE included"
+
+# ------------------------------------------------------ version and changelog --
+# An adopter on this route sees upstream only through the plugin, so the version and
+# the changelog travel in it: the setup skill compares the project's pinned VERSION
+# with this one, and the changelog says what moved between the two.
+cp base/VERSION "$out/VERSION"
+cp CHANGELOG.md "$out/CHANGELOG.md"
+c=$(grep -cE '^## [0-9]+\.[0-9]+\.[0-9]+' "$out/CHANGELOG.md" || true)
+note "ok   VERSION and CHANGELOG.md included ($c release entries)"
+
+# -------------------------------------------------------------- the gates --
+# Each reports what it counted, so a gate that has stopped looking at the right thing
+# does not pass in silence.
+echo "gates"
+[ -d "$out/bin" ] && bad "top-level bin/ in the plugin" || note "ok   no top-level bin/"
+links=$(find "$out" -type l | wc -l)
+[ "$links" -eq 0 ] && note "ok   no symlinks (counted $links)" || bad "$links symlink(s)"
+skills_built=$(ls -d "$out"/skills/*/ | wc -l)
+[ "$skills_built" -eq $((n + 1)) ] \
+  && note "ok   $skills_built skills in the plugin ($n from the base, 1 generated)" \
+  || bad "skill count does not add up: $skills_built built, $n from the base plus 1 expected"
+v_root=$(cat "$out/VERSION"); v_asset=$(cat "$out/skills/zoe-sdlc-claude-init/assets/VERSION")
+v_manifest=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["version"])' "$out/.claude-plugin/plugin.json")
+[ "$v_root" = "$version" ] && [ "$v_asset" = "$version" ] && [ "$v_manifest" = "$version" ] \
+  && note "ok   version reads $version at the root, in the setup skill's assets and in plugin.json" \
+  || bad "version mismatch: root '$v_root', assets '$v_asset', plugin.json '$v_manifest', base '$version'"
+[ "$c" -gt 0 ] && note "ok   changelog present ($c release entries)" || bad "no release entries in the changelog"
+
+# ------------------------------------------------------------- validation --
+echo "validation"
+if command -v claude >/dev/null 2>&1; then
+  if report=$(claude plugin validate --strict "$out" 2>&1); then
+    note "ok   plugin manifest and skills"
+  else
+    bad "plugin manifest and skills:"
+    printf '%s\n' "$report" | sed 's/^/       /'
+  fi
+else
+  bad "claude is not available, so the plugin was not validated"
+fi
+
+# -------------------------------------------------------------- packaging --
+# Built with python rather than zip(1) so it is reproducible: entries sorted and
+# every timestamp fixed.
+echo "package"
+python3 - "$out" "$zip_out" <<'PY'
+import pathlib, sys, zipfile
+
+tree, out = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2])
+FIXED = (1980, 1, 1, 0, 0, 0)
+
+files = sorted(p for p in tree.rglob("*") if p.is_file())
+with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
+    for f in files:
+        info = zipfile.ZipInfo("zoe-sdlc/" + str(f.relative_to(tree)), date_time=FIXED)
+        info.compress_type = zipfile.ZIP_DEFLATED
+        info.external_attr = (0o755 if f.stat().st_mode & 0o100 else 0o644) << 16
+        z.writestr(info, f.read_bytes())
+print(f"  ok   {out} ({out.stat().st_size} bytes, {len(files)} files)")
+PY
+
+echo
+if [ "$fail" -eq 0 ]; then echo "PASS"; else echo "FAIL"; fi
+exit "$fail"
