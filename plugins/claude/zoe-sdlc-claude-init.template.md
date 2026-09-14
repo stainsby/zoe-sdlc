@@ -45,13 +45,24 @@ kernel's `.zoe/`, so neither setup skill touches the other's files.
    is, this skill is not for that project. Stop and say so, rather than writing a second copy
    beside the first.
 
-   Last, compare versions. If `.zoe-sdlc/VERSION` is already there and differs from the
-   plugin's own `VERSION`, this is an upgrade, not a repair. The plugin has been updated, so
-   the skills in use are the newer release's, while the pinned instructions are still the older
-   one's: say so. Read the entries between the two versions in the plugin's `CHANGELOG.md`, put
-   them to the director, and go on to step 3 only once they have approved the newer release.
-   Until then, stop here and change nothing. Nothing else notices an update, so this is the only
-   place the comparison is made.
+   Last, compare what is already in `.zoe-sdlc/` with this plugin's own `VERSION`:
+
+   - **Neither file is there:** a first install. Go on to step 3.
+   - **`.zoe-sdlc/VERSION` matches the plugin's:** a repair. Go on to step 3, which puts back the
+     released text of the version the project already runs. If the copy there differed from that
+     text, say so in your report.
+   - **`.zoe-sdlc/VERSION` is older than the plugin's:** an upgrade. The plugin has been
+     updated, so the skills in use are the newer release's while the pinned instructions are
+     still the older one's: say so. Read the entries between the two versions in the plugin's
+     `CHANGELOG.md`, put them to the director, and go on to step 3 only once they have approved
+     the newer release.
+   - **Anything else** — the instructions file there with no `VERSION` beside it, or a `VERSION`
+     newer than the plugin's: you cannot tell what the project runs, or the plugin is older than
+     it. Say exactly what you found and put it to the director. Do not go on to step 3 without
+     their decision.
+
+   Until the director has decided, stop here and change nothing. Nothing else notices an update,
+   so this is the only place the comparison is made.
 
 3. **Put the instructions file and `VERSION` in the workspace.** Where you can run commands:
 
