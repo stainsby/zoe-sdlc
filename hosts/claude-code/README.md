@@ -44,10 +44,11 @@ zoe-sdlc/hosts/claude-code/check-install.sh
 
 The leading path is wherever you put this tree — `zoe-sdlc/` above, to match the import
 example earlier. Run it from your project root. It checks the directory it is run from and
-cannot tell whether that is your project, so run from anywhere else it reports an install that
-is not there; its last line names the directory it checked. There it looks for your
+cannot tell whether that is your project, so run from anywhere else it lists a sound install
+as missing; its last line names the directory it checked. There it looks for your
 `CLAUDE.md`, `.claude/CLAUDE.md` and `.claude/skills/`, and it also reads `~/.claude/CLAUDE.md`
-and `~/.claude/skills/`, since what is there loads too.
+and `~/.claude/skills/`, since what is there loads too — and where a skill is in both places,
+Claude Code loads the one in `~/.claude/skills/`.
 
 With no argument it checks the base in the tree it sits in, which is right whenever you keep
 this tree whole. If you keep `base/` apart from this folder, pass its path:
@@ -73,5 +74,5 @@ is cheap to add to whatever already runs your project's checks.
 
 If you installed the kernel by hand, its own README ends the install with a check whose last
 line should count the skills the kernel ships. That check counts every link in
-`.claude/skills/`, so once this base is installed as well it counts this base's skills too,
-and a correct install of both shows a higher number than the kernel's README says to expect.
+`.claude/skills/`, so if you linked this base's skills there too, a correct install of both
+shows a higher number than the kernel's README says to expect.

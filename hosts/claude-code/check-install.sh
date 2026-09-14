@@ -91,28 +91,41 @@ ships=$(find "$base/skills" -mindepth 1 -maxdepth 1 -type d | wc -l)
 [ "$ships" -gt 0 ] || { echo "FAIL: the base tree at $base ships no skills" >&2; exit 2; }
 
 linked=0
+# The host loads skills from the project's .claude/skills/ and from ~/.claude/skills/, and
+# where a name is in both, Claude Code documents that the one in ~/.claude/skills/ wins. So
+# a sound link in the project proves nothing on its own: every entry under the name, in
+# either place, must lead into this base. Where the two are one directory, look once.
+dirs=(.claude/skills)
+[ "$HOME/.claude/skills" -ef .claude/skills ] || dirs+=("$HOME/.claude/skills")
 for d in "$base"/skills/*/; do
   name="$(basename "$d")"
-  # The host loads skills from the project's .claude/skills/ and from ~/.claude/skills/, so
-  # look in the project first, then in the home directory.
-  l=".claude/skills/$name"
-  [ -e "$l" ] || [ -L "$l" ] || l="$HOME/.claude/skills/$name"
-  # -ef asks whether two paths are the same directory, however either is reached.
-  if [ "$l" -ef "$base/skills/$name" ]; then
-    linked=$((linked+1))
-  elif [ -L "$l" ] && [ -e "$l" ]; then
-    echo "FAIL: $l links to a different copy of the base, not $base" >&2
-    fault=1
-  elif [ -e "$l" ]; then
-    echo "FAIL: $l is a copy, not a link into $base — link it, so it follows the base when you upgrade" >&2
-    fault=1
-  elif [ -L "$l" ]; then
-    # A link that is there but points at nothing. Counted as a fault here, but reported
-    # once only — by the sweep below, which visits every link and would otherwise say it
-    # a second time.
-    fault=1
-  else
+  found=0; sound=1
+  for s in "${dirs[@]}"; do
+    l="$s/$name"
+    [ -e "$l" ] || [ -L "$l" ] || continue
+    found=1
+    # -ef asks whether two paths are the same directory, however either is reached.
+    if [ "$l" -ef "$base/skills/$name" ]; then
+      :
+    elif [ -L "$l" ] && [ -e "$l" ]; then
+      echo "FAIL: $l links to a different copy of the base, not $base" >&2
+      sound=0
+    elif [ -e "$l" ]; then
+      echo "FAIL: $l is a copy, not a link into $base — link it, so it follows the base when you upgrade" >&2
+      sound=0
+    else
+      # A link that is there but points at nothing. Counted as a fault here, but reported
+      # once only — by the sweep below, which visits every link and would otherwise say it
+      # a second time.
+      sound=0
+    fi
+  done
+  if [ "$found" -eq 0 ]; then
     echo "FAIL: skill not linked into .claude/skills/ or ~/.claude/skills/: $name" >&2
+    fault=1
+  elif [ "$sound" -eq 1 ]; then
+    linked=$((linked+1))
+  else
     fault=1
   fi
 done
@@ -123,7 +136,9 @@ done
 # never visits, and a dangling link is a skill the host silently does not load. Every
 # link in the project's .claude/skills/ is this check's business; in ~/.claude/skills/,
 # only this base's own names are.
-for l in .claude/skills/* "$HOME"/.claude/skills/zoe-sdlc-*; do
+sweep=(.claude/skills/*)
+[ "${#dirs[@]}" -gt 1 ] && sweep+=("$HOME"/.claude/skills/zoe-sdlc-*)
+for l in "${sweep[@]}"; do
   [ -L "$l" ] || continue
   [ -e "$l" ] || { echo "FAIL: dangling skill link: $l" >&2; fault=1; }
 done
