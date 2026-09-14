@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.6.0 — 2026-09-14
 
 ### A way to check the install took
 
@@ -59,6 +59,9 @@ first.
 adoption, and `zoe-sdlc-components` says the same of what makes a test environment
 close enough to production to trust its results. `zoe-sdlc-adopt` asked neither. It
 now asks both, in its list of decisions.
+
+0.5.0 stopped asking who provides the independent eyes, on the understanding that
+`zoe-setup` asks it. It does not, so the question is back in `zoe-sdlc-adopt`.
 
 **If you adopted an earlier version,** settle both with your director and record them
 with your other adoption decisions.
