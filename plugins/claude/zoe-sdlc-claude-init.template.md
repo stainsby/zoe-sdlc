@@ -9,9 +9,9 @@ This is a one-off. It puts the base's instructions and version into the workspac
 the environment load the instructions beside the kernel's. The base's skills stay in this
 plugin, and once this has run, this skill is done.
 
-Run it again only to repair instructions that have gone missing, or to apply a newer release
-of the base that the director has approved. Every step below either changes nothing or fixes
-a difference.
+Run it again after updating the plugin, or to repair instructions that have gone missing.
+After an update, step 2 stops for the director's approval before anything is copied. Apart
+from that approved copy, every step below either changes nothing or fixes a difference.
 
 The instructions file and `VERSION` travel with this skill, in its own `assets/` folder, so
 what lands in the workspace is a copy of the released text rather than anything retyped.
@@ -44,6 +44,14 @@ kernel's `.zoe/`, so neither setup skill touches the other's files.
    `base/instructions/zoe-sdlc.instructions.md` with an import line pointing into it. If it
    is, this skill is not for that project. Stop and say so, rather than writing a second copy
    beside the first.
+
+   Last, compare versions. If `.zoe-sdlc/VERSION` is already there and differs from the
+   plugin's own `VERSION`, this is an upgrade, not a repair. The plugin has been updated, so
+   the skills in use are the newer release's, while the pinned instructions are still the older
+   one's: say so. Read the entries between the two versions in the plugin's `CHANGELOG.md`, put
+   them to the director, and go on to step 3 only once they have approved the newer release.
+   Until then, stop here and change nothing. Nothing else notices an update, so this is the only
+   place the comparison is made.
 
 3. **Put the instructions file and `VERSION` in the workspace.** Where you can run commands:
 
@@ -106,20 +114,13 @@ kernel's `.zoe/`, so neither setup skill touches the other's files.
    ```
 
    In Claude Code, exactly one line must print `RESOLVES` and none `DANGLING`. A second
-   import of the same file loads it twice. In Cowork, the import is the person's confirmation,
-   and your report says it rests on their word. Where neither applies, there is no import to
-   count. In every case `cmp` must print `INSTRUCTIONS-MATCH` and the `diff` `VERSION-MATCHES`,
-   and nothing else. A copy that resolves but is empty or shortened loads without the approval
-   points, which is what this step exists to catch. If part of this is refused, compare the same
-   things with your file tools and say which you used. State a count and a verdict, not an
-   impression.
-
-## A newer release of the plugin
-
-When the plugin has been updated, `.zoe-sdlc/VERSION` and the plugin's own `VERSION` differ.
-The skills in use are then the newer release's, while the pinned instructions are still the
-older one's. Nothing notices this until someone runs this skill, so when you find it, say so. Read the entries between the two versions in the plugin's `CHANGELOG.md`,
-put them to the director, and only on their approval run steps 3 to 5 again.
+   import of the same file loads it twice. In Cowork there is no import line to count: that
+   part of the check rests on the person's confirmation, and your report says so. Where neither
+   applies, there is no import to count either. In every case `cmp` must print
+   `INSTRUCTIONS-MATCH` and the `diff` `VERSION-MATCHES`, and nothing else. A copy that
+   resolves but is empty or shortened loads without the approval points, which is what this
+   step exists to catch. If part of this is refused, compare the same things with your file
+   tools and say which you used. State a count and a verdict, not an impression.
 
 ## Then hand over
 

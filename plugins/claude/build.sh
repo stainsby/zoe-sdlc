@@ -19,7 +19,7 @@
 # plugins/claude/README.md gives the reason: Claude Code, Cowork and
 # `claude plugin validate` read component paths in plugin.json differently, and no
 # value satisfies all three. So nothing is declared, and everything is placed where
-# every surface looks by default.
+# every Claude product looks by default.
 #
 # Re-running on unchanged inputs changes nothing, the zip included: it is built
 # with fixed timestamps, so its bytes depend on content alone.

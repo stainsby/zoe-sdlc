@@ -64,7 +64,8 @@ kernel's `.zoe/`, so neither setup skill touches the other's files.
 
 On this route nothing is linked by hand, so `hosts/claude-code/check-install.sh` does not
 apply. The setup skill ends with the check instead: exactly one import line for the base's
-instructions resolves, and the project's `.zoe-sdlc/VERSION` matches the plugin's. In Cowork,
+instructions resolves, the project's copy of the instructions is byte-identical to the released
+text in the plugin, and the project's `.zoe-sdlc/VERSION` matches the plugin's. In Cowork,
 the instruction the person pasted cannot be read back, so the check there rests on their
 confirmation, and the skill says so.
 
