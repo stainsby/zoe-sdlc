@@ -13,7 +13,8 @@
 # Run it from your project root. It checks the directory it is run from and cannot tell
 # whether that is your project, so its last line names the directory it checked. There it
 # looks for CLAUDE.md, .claude/CLAUDE.md and .claude/skills/; it also reads
-# ~/.claude/CLAUDE.md and ~/.claude/skills/, because what is there loads too.
+# ~/.claude/CLAUDE.md and ~/.claude/skills/, because what is there loads too. It does not read
+# anything installed through an organisation's managed settings, which loads ahead of both.
 #
 # With no argument it checks the base in the tree it sits in, which is right whenever this
 # tree is kept whole. Pass the path to base/ only if you keep base/ apart from this folder.

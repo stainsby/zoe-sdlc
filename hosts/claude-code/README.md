@@ -48,7 +48,8 @@ cannot tell whether that is your project, so run from anywhere else it lists a s
 as missing; its last line names the directory it checked. There it looks for your
 `CLAUDE.md`, `.claude/CLAUDE.md` and `.claude/skills/`, and it also reads `~/.claude/CLAUDE.md`
 and `~/.claude/skills/`, since what is there loads too — and where a skill is in both places,
-Claude Code loads the one in `~/.claude/skills/`.
+Claude Code loads the one in `~/.claude/skills/`. It does not read anything installed through
+your organisation's managed settings, which Claude Code loads ahead of both.
 
 With no argument it checks the base in the tree it sits in, which is right whenever you keep
 this tree whole. If you keep `base/` apart from this folder, pass its path:
