@@ -76,6 +76,10 @@ in your install; **2** is the check unable to run at all, because it could not f
 It is worth running again after any change to your skill links or your `CLAUDE.md`, and it
 is cheap to add to whatever already runs your project's checks.
 
+When you take a new release of the base, read its entry in `CHANGELOG.md` before you run the
+check. Where a release changes what an existing project has to do, its entry says so under
+**If you adopted an earlier version**.
+
 If you installed the kernel by hand, its own README ends the install with a check whose last
 line should count the skills the kernel ships. That check counts every link in
 `.claude/skills/`, so if you linked this base's skills there too, a correct install of both

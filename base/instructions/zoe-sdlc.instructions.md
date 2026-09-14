@@ -20,7 +20,8 @@ By default, human approval is needed at these points in this process:
 
 An adopter can give the AI more autonomy than this, or less. The points a
 project keeps go into its charter's hard rules, which every agent doing the work
-is given (`zoe-sdlc-adopt`).
+is given (`zoe-sdlc-adopt`). Where a skill asks for one of these approvals, it
+asks only while the project keeps that point.
 
 ## Style
 

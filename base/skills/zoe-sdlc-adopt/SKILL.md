@@ -2,7 +2,7 @@
 name: zoe-sdlc-adopt
 kind: action
 description: Bring a software project — new or existing — under this process, extending `zoe-setup`. For the single pass at the start, and again only if the project's foundations genuinely shift.
-version: 7
+version: 8
 ---
 
 > SDLC Base file — read-only to adopters. Do not edit. Specialise by adding
@@ -62,12 +62,16 @@ Steps:
    - **The verification setup** — how the tests are run, what "all relevant
      tests" means for a given change, and where the evidence is kept. A project
      with no way to run tests makes building one its first piece of work.
-   - **The environments** — which ones the project has, and which one
-     acceptance testing runs against (`zoe-sdlc-components`).
+   - **The environments** — which ones the project has, which one acceptance
+     testing runs against, and what makes a test environment close enough to
+     production to trust its results (`zoe-sdlc-components`).
    - **How often the charter audit runs** — `zoe-setup` asks which independent
      checks this enterprise needs and how often each runs. This process brings
      four (`zoe-sdlc-audits`). Three of them start on an event; the charter
      audit has none, so it needs a time.
+   - **Who provides the independent eyes for each audit** — a separate agent,
+     a session that has not carried the work's context, or a different person.
+     Arranging nothing is not one of the choices (`zoe-sdlc-audits`).
 3. **Create three checks**, one for each of these:
    - The capability dependency graph is valid (`zoe-sdlc-components`).
    - Code and capabilities match in both directions (`zoe-sdlc-components`).

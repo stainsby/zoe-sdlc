@@ -41,7 +41,9 @@ well differs from host to host. So an agent doing implementation work could dele
 a test with nothing in front of it saying to ask first.
 
 `zoe-sdlc-adopt` now asks the director which of the approval points the project
-keeps, and writes those into the charter's hard rules.
+keeps, and writes those into the charter's hard rules. A skill that asks for one of
+these approvals now asks only while the project keeps that point, so a point the
+director gives up is given up everywhere.
 
 The list itself grows from five points to seven. Two that the skills already
 required were missing from it: skipping a step in the order every change follows,
@@ -50,6 +52,16 @@ and adding a task to a batch of work already under way.
 **If you adopted an earlier version,** ask your director which of the seven points
 your project keeps, and add them to your charter's hard rules as things to ask
 first.
+
+### Two decisions adoption was not asking for
+
+`zoe-sdlc-audits` says who provides each audit's independent eyes is chosen at
+adoption, and `zoe-sdlc-components` says the same of what makes a test environment
+close enough to production to trust its results. `zoe-sdlc-adopt` asked neither. It
+now asks both, in its list of decisions.
+
+**If you adopted an earlier version,** settle both with your director and record them
+with your other adoption decisions.
 
 ### A plugin for Claude
 
