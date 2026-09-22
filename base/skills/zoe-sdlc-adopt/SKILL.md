@@ -32,7 +32,7 @@ Steps:
    which of the points the instructions list this project keeps, and write
    those into the charter's hard rules as things to ask first. Only the hard
    rules make an action gated, and every agent doing the work is given them,
-   including one launched for a single task, which may not be given an
+   including one launched for a single task, which might not be given an
    instructions file.
 2. **Decide these too.** Each is recorded once, with the decisions `zoe-setup`
    made; the skill named beside it explains it.
