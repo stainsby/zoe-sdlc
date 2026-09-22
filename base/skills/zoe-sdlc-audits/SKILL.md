@@ -88,7 +88,8 @@ checking what may change as a result; where it cannot, they may run together.
 
 The acceptance test exercises each user story in the story's named role,
 through the interface as it stands in the environment chosen for this at
-adoption (`zoe-sdlc-adopt`), using only the access and knowledge that role would
+adoption — the one judged close enough to production for a pass to mean
+something (`zoe-sdlc-adopt`) — using only the access and knowledge that role would
 really have. Reading the specifications, using a developer tool, or going in by
 a back way that role has no access to makes the result worthless. Every attempt
 produces evidence an independent reader could judge — recordings, transcripts,

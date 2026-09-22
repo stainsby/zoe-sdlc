@@ -77,8 +77,8 @@ After updating the plugin, ask Claude to run `zoe-sdlc-claude-init` again. It fi
 project's `.zoe-sdlc/VERSION` and the plugin's differ, reads out what the changelog says changed
 between them, and copies nothing until the director approves.
 
-The dependency on the kernel allows any 1.x release from 1.4.1, the kernel this base was last
-checked against. If the kernel's plugin is outside that range, Claude Code reports a dependency
+The dependency on the kernel allows any 1.x release from 1.4.1, the oldest this base is known
+to work with; it was last checked against 1.5.0. If the kernel's plugin is outside that range, Claude Code reports a dependency
 error and disables this plugin until it is resolved, which here means a release of the base
 that accepts the newer kernel.
 

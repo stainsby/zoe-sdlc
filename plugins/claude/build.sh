@@ -51,7 +51,7 @@ mkdir -p "$out/.claude-plugin" "$out/skills" "$(dirname "$zip_out")"
 # The kernel's plugin is a dependency. Claude Code resolves a dependency inside the
 # catalogue of the plugin that declares it, which is why both are listed in the same
 # one, and enabling this plugin enables the kernel's too. The range allows any 1.x
-# from the kernel release this base was last checked against. Outside it, Claude Code
+# from the oldest kernel release this base is known to work with. Outside it, Claude Code
 # reports a dependency error and disables this plugin until a release of the base
 # accepts the newer kernel.
 echo "manifest"

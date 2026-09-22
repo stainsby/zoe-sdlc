@@ -43,7 +43,7 @@ Alternatively, get your AI to read *this* file and help you wire in the
 instructions and skills.
 
 If your AI starts from the kernel's `hosts/any-host/AGENTS.md`, add a line there
-telling it to read this base's instructions file as well: that file names only
+telling it to read this base's instructions file as well: `AGENTS.md` names only
 the kernel's instructions and your own.
 
 On Claude Code or Cowork, ZOE SDLC also installs as a plugin, which brings the

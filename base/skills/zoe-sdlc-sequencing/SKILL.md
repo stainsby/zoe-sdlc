@@ -58,7 +58,7 @@ does not earn the highest.
   pass and every document it affected says what was actually built. Never on
   intention or assertion. Untested code counts as not yet written.
 - **A specification edition** — one numbered revision of a specification
-  (`zoe-sdlc-specify`) — is complete when it has also passed a compliance audit
+  (`zoe-sdlc-specify`) — is complete when a compliance audit has also cleared it
   (`zoe-sdlc-audits`).
 - **A release, or the project itself,** is complete only when all four checks
   have cleared it (`zoe-sdlc-audits`). Passing tests do not show that the

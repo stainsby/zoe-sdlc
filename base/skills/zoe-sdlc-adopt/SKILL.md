@@ -32,8 +32,8 @@ Steps:
    which of the points the instructions list this project keeps, and write
    those into the charter's hard rules as things to ask first. Only the hard
    rules make an action gated, and every agent doing the work is given them,
-   including one launched for a single task that never sees an instructions
-   file.
+   including one launched for a single task, which may not be given an
+   instructions file.
 2. **Decide these too.** Each is recorded once, with the decisions `zoe-setup`
    made; the skill named beside it explains it.
 
@@ -58,8 +58,9 @@ Steps:
      with no way to run tests makes building one its first piece of work.
    - **The environments** — which ones the project has, which one acceptance
      testing runs against, and what makes a test environment close enough to
-     production to trust its results (`zoe-sdlc-components`).
-   - **How often the charter audit runs** — the other three audits start on an
+     production to trust its results (`zoe-sdlc-components`,
+     `zoe-sdlc-audits`).
+   - **How often the charter audit runs** — the other three checks start on an
      event; this one has none, so it needs a time (`zoe-sdlc-audits`).
    - **Who provides the independent eyes for each audit** — a separate agent,
      a fresh conversation that has not carried the work's context, or a
