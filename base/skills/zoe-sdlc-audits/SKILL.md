@@ -21,9 +21,14 @@ check compares one of them with the next, in **both directions**:
 | Compliance audit | the capabilities against the code | at the close of a specification edition |
 | Acceptance test | the stories against the running system | before work reaches the people the stories name |
 
-When more than one is due, run them in that order, so that anything found out
-of line early is fixed before effort goes into checking things that may change
-as a result.
+Each check sweeps the whole project, and runs once when due — not once per
+release or other piece of work. Its record names the pieces of work it clears
+and those it does not, with the finding that holds each open. Clearing a piece
+of work means only that this check's comparison held for it.
+
+When more than one is due, run them in that order where a finding from an
+earlier check can be fixed before the next runs, so effort is not spent
+checking what may change as a result; where it cannot, they may run together.
 
 ## Rules all audits share
 
@@ -46,8 +51,8 @@ as a result.
   document against the template it was made from. That separates "the shape of
   this document has drifted" from "what it says is wrong", before the slower
   reading starts. It is also where a document or code file that
-  has grown too large to read whole is picked up, and recorded as a finding
-  like any other.
+  has grown too large to read whole, or a leaf component past the project's
+  size limit, is picked up, and recorded as a finding like any other.
 - **Repeatable.** Write down the procedure — what was read, in what order, and
   what was asked of each — and keep it with the audit. Two runs over an
   unchanged project should reach the same findings; without a procedure they

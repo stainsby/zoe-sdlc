@@ -54,9 +54,9 @@ Steps:
    - **The template forms** — what shapes each kind of structured document.
      Adopt whatever the project already uses; make one only where there is
      nothing (`zoe-sdlc-templates`).
-   - **What counts as one session** — the size limit on a task and on a leaf
-     component, in terms two people would agree on from the outside
-     (`zoe-sdlc-components`).
+   - **The size limit** — how much fits in one sitting, for a task and a leaf
+     component, in terms two people would agree on from the outside; or that it
+     cannot yet be set, and why (`zoe-sdlc-components`).
    - **The engineering practices** — what this project holds code to beyond
      passing its tests (`zoe-sdlc-sequencing`).
    - **The verification setup** — how the tests are run, what "all relevant

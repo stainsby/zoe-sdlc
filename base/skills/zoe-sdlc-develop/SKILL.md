@@ -21,8 +21,8 @@ Produces: the implementation.
 An implementation task covers either one component or several.
 
 - **One component.** The task builds a single component against its
-  specification. If the work will not fit in one session, the component is too
-  big: change how the system is broken up, rather than letting the task run
+  specification. If the work will not fit in one sitting (`zoe-sdlc-components`), the
+  component is too big: change how the system is broken up, rather than letting the task run
   over.
 - **Several at once.** Work spanning more than one component, or the systems
   around them. Split off whatever can be done one component at a time;

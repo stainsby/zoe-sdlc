@@ -26,6 +26,11 @@ Whatever its format, it says:
 - how it will be tested — every capability it owns, both on its own and
   against the capabilities it uses.
 
+A specification states what its own component owns and points at its
+children's specifications for the rest, so each fact lives in one document and
+a reader's attention is not spent on it twice. A rule the parent sets over all
+its children is the parent's own.
+
 A specification that cannot yet state a capability's contract is not ready for
 review.
 

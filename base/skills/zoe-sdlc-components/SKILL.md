@@ -32,16 +32,18 @@ top-level component that binds all others together. Three classes matter:
 
 ## Sizing
 
-A **leaf component** (one with no sub-components) is sized so it can be fully
-specified, implemented, and tested within a single working session of the human
-or agent doing the work — this is what keeps each unit within what an AI
-assistant can hold in its context at once, as well as within a human's
-attention span. A component too large for that should be broken into
-sub-components. An oversized leaf should be treated as a defect.
+A **leaf component** (one with no sub-components) is sized so the human or agent
+doing the work can fully specify, implement and test it in one sitting — one
+stretch of work with the whole of it in mind, within what an AI assistant can
+hold in its context and a human's attention span. A sitting is not the
+kernel's session, which can run many tasks. A component too large for one
+sitting is broken into sub-components; an oversized leaf is a defect.
 
-What counts as one session differs by project, by person and by assistant.
-Each project settles it at adoption and records it (see `zoe-sdlc-adopt`),
-in a form two people could agree on from the outside.
+How much fits in a sitting differs by project, person and assistant, so each
+project records its size limit at adoption (`zoe-sdlc-adopt`), in terms two
+people could agree on from the outside. Until it is recorded, this rule is
+unchecked, not met. A project that cannot yet set a limit records that, and
+why, instead.
 
 ## Identity
 

@@ -63,7 +63,7 @@ does not earn the highest.
   (`zoe-sdlc-specify`) — is complete when it has also passed a compliance audit
   (`zoe-sdlc-audits`).
 - **A release, or the project itself,** is complete only when all four checks
-  have passed for the work in question (`zoe-sdlc-audits`). Tests passing says
+  have cleared it (`zoe-sdlc-audits`). Tests passing says
   the code does what the specification asked. It says nothing about whether the
   specification was what anybody wanted, and that is what the four checks are
   for.
