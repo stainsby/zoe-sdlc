@@ -2,7 +2,7 @@
 name: zoe-sdlc-specify
 kind: action
 description: Write or update a component's specification. For any component about to be implemented, and any whose contract, dependencies or constraints have changed.
-version: 3
+version: 4
 ---
 
 > SDLC Base file — read-only to adopters. Do not edit. Specialise by adding
