@@ -80,7 +80,6 @@ When you take a new release of the base, read its entry in `CHANGELOG.md` before
 check. Where a release changes what an existing project has to do, its entry says so under
 **If you adopted an earlier version**.
 
-If you installed the kernel by hand, its own README ends the install with a check whose last
-line should count the skills the kernel ships. That check counts every link in
-`.claude/skills/`, so if you linked this base's skills there too, a correct install of both
-shows a higher number than the kernel's README says to expect.
+If you installed a kernel older than 1.5.1 by hand, its own install check counts every link in
+`.claude/skills/`, this base's included, so a correct install of both shows a higher number
+than the kernel's README says to expect. From 1.5.1 it counts only the kernel's own.
