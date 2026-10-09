@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### A component's capabilities are all of what it does
+
+`zoe-sdlc-components` now says it outright: behaviour that none of a component's capabilities
+covers is either a capability missing from its specification or code that should not be there.
+The dependency graph and the dangling-code check already implied it.
+
 ### Checked against kernel 1.5.1
 
 The note in `hosts/claude-code/README.md` on the kernel's manual install check now says that
