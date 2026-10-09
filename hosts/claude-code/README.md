@@ -82,4 +82,4 @@ check. Where a release changes what an existing project has to do, its entry say
 
 If you installed a kernel older than 1.5.1 by hand, its own install check counts every link in
 `.claude/skills/`, this base's included, so a correct install of both shows a higher number
-than the kernel's README says to expect. From 1.5.1 it counts only the kernel's own.
+than the kernel's README says to expect. From 1.5.1 the kernel's check counts only its own.

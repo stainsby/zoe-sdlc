@@ -4,9 +4,9 @@
 
 ### Checked against kernel 1.5.1
 
-The note on the kernel's manual install check now says that from kernel 1.5.1 it counts only
-the kernel's own skill links, so linking this base's skills beside them no longer raises the
-number. Nothing else in the base relied on what 1.5.1 changed.
+The note in `hosts/claude-code/README.md` on the kernel's manual install check now says that
+from kernel 1.5.1 it counts only the kernel's own skill links, so linking this base's skills
+beside them no longer raises the number. Nothing else in the base relied on what 1.5.1 changed.
 
 ## 0.7.0 — 2026-09-23
 
