@@ -64,8 +64,8 @@ system connect: a component provides capabilities, and works by using the
 capabilities of other components. Each capability is owned by exactly one
 component and scoped by it; a component with sub-components documents only the
 capabilities it directly owns — a child's capabilities live with the child.
-Together, a component's capabilities are everything it does: behaviour that none
-of them covers is either a capability missing from its specification or code
+Together, a component's capabilities and its children's are everything it does:
+behaviour that none of them covers is either a capability missing from its specification or code
 that should not be there.
 
 Every capability states a contract: what it takes in, what it gives back, what
