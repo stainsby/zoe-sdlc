@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.7.1 — 2026-10-11
 
 ### A component's capabilities are all of what it does
 
